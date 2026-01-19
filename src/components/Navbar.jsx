@@ -108,7 +108,7 @@ const Navbar = () => {
                             onClick={(e) => scrollToSection(e, "#Home")}
                             className="text-base sm:text-xl font-bold bg-gradient-to-r from-[#3b82f6] to-[#1d4ed8] bg-clip-text text-transparent whitespace-nowrap"
                         >
-                            {profileName.split(' ').slice(0, 2).join(' ')}
+                            San Project
                         </a>
                     </div>
 
