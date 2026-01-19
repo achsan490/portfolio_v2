@@ -1,45 +1,61 @@
-# Portfolio V5
+# Portfolio V2 - Achsanul Khuluq Izzulchaq
 
-Hello everyone\! 👋
+Hello everyone! 👋
 
-Let me introduce myself, I'm **Fazri Lukman Nurrohman**. On this occasion, I'd like to share the portfolio website project that I've developed.
+I'm **Achsanul Khuluq Izzulchaq**, a passionate Simple-Stack Developer. This is my professional portfolio website showcasing my projects, skills, and experience in modern web development.
 
 ## 🚀 Live Demo
 
-**Website Link:** [https://www.fazrilukman.my.id/](https://www.fazrilukman.my.id/)
+**Website Link:** [https://sann.my.id/](https://sann.my.id/)
 
 ## 🛠️ Tech Stack
 
 This project is built using modern web technologies:
 
-  - **ReactJS** - Frontend framework
-  - **Tailwind CSS** - Utility-first CSS framework
-  - **Supabase** - Backend for portfolio data, certificates, and comment system
-  - **AOS** - Animate On Scroll library
-  - **Framer Motion** - Animation library
-  - **Lucide** - Icon library
-  - **Material UI** - React component library
-  - **SweetAlert2** - Beautiful alert dialogs
+- **ReactJS** - Frontend framework
+- **Vite** - Next-generation frontend tooling
+- **Tailwind CSS** - Utility-first CSS framework
+- **Supabase** - Backend for portfolio data, certificates, and comment system
+- **AOS** - Animate On Scroll library
+- **Framer Motion** - Animation library for smooth transitions
+- **Lucide React** - Beautiful icon library
+- **Material UI** - React component library
+- **SweetAlert2** - Beautiful alert dialogs
+- **EmailJS** - Email service integration
+- **Three.js & React Three Fiber** - 3D graphics and animations
+- **GSAP** - Professional-grade animation library
+
+## ✨ Features
+
+- 🎨 Modern and professional UI/UX design
+- 📱 Fully responsive across all devices
+- 🌙 Smooth animations and transitions
+- 💼 Dynamic project showcase
+- 📜 Certificate gallery
+- 💬 Real-time comment system
+- 📧 Contact form with EmailJS integration
+- 🎭 Interactive 3D elements
+- ⚡ Optimized performance with Vite
 
 ## 📋 Prerequisites
 
 Before running this project, ensure you have the following installed:
 
-  - **Node.js** (version 14.x or higher)
-  - **npm** or **yarn** package manager
+- **Node.js** (version 14.x or higher)
+- **npm** or **yarn** package manager
 
 ## 🏃‍♂️ Getting Started
 
 Follow these steps to run the project locally:
 
-### 1\. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Fazrilukman/Portofolio_V5.git
-cd Portofolio_V5
+git clone https://github.com/achsan490/portfolio_v2.git
+cd portfolio_v2
 ```
 
-### 2\. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
@@ -51,13 +67,33 @@ If you encounter peer dependency issues, use:
 npm install --legacy-peer-deps
 ```
 
-### 3\. Run the Development Server
+### 3. Configure Environment Variables
+
+Create a `.env` file in the root directory and add your configuration:
+
+```env
+# Supabase Configuration
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# EmailJS Configuration (Optional)
+VITE_EMAILJS_SERVICE_ID=your-service-id
+VITE_EMAILJS_TEMPLATE_ID=your-template-id
+VITE_EMAILJS_PUBLIC_KEY=your-public-key
+```
+
+**Important:**
+- All environment variables must be prefixed with `VITE_` for Vite to access them
+- Never commit your `.env` file to version control
+- Restart your development server after modifying the `.env` file
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-### 4\. Open in Browser
+### 5. Open in Browser
 
 Access the application through the link displayed in your terminal (usually `http://localhost:5173`).
 
@@ -65,26 +101,33 @@ Access the application through the link displayed in your terminal (usually `htt
 
 To create a production-ready build:
 
-1.  Run the build command:
+1. Run the build command:
 
-    ```bash
-    npm run build
-    ```
+```bash
+npm run build
+```
 
-2.  The build files will be saved in the `dist` folder. Upload this folder to your hosting server.
+2. The build files will be saved in the `dist` folder. Upload this folder to your hosting server (Vercel, Netlify, etc.).
 
-## ⚙️ Configuration (Supabase)
+3. Preview the production build locally:
 
-All backend data for this project (portfolio, certificates, and comments) is managed by Supabase.
+```bash
+npm run preview
+```
 
-### 1\. Create Supabase Project
+## ⚙️ Supabase Configuration
 
-  - Go to [Supabase](https://supabase.com/) and create a new project.
-  - Keep your **Project URL** and **anon public key** handy. You can find them in **Settings \> API**.
+All backend data for this project (portfolio projects, certificates, comments, and profile settings) is managed by Supabase.
 
-### 2\. Setup Database Tables & Policies
+### 1. Create Supabase Project
 
-Run the following all-in-one SQL script in your Supabase **SQL Editor**. This will set up all necessary tables, security policies, storage, and also insert one example for each table.
+- Go to [Supabase](https://supabase.com/) and create a new project
+- Keep your **Project URL** and **anon public key** handy
+- Find them in **Settings > API**
+
+### 2. Setup Database Tables & Policies
+
+Run the following SQL script in your Supabase **SQL Editor**. This will set up all necessary tables, security policies, storage, and insert example data.
 
 ```sql
 -- ---- TABLE CREATION ----
@@ -106,7 +149,10 @@ CREATE TABLE public.projects (
 CREATE TABLE public.certificates (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
-  "Img" text
+  "Img" text,
+  "Title" text,
+  "Issuer" text,
+  "Date" text
 );
 
 -- Creates the 'portfolio_comments' table for the comment system
@@ -119,12 +165,25 @@ CREATE TABLE public.portfolio_comments (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Creates the 'profile_settings' table for dynamic profile data
+CREATE TABLE public.profile_settings (
+  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  title text DEFAULT 'Simple-Stack Developer',
+  subtitle text,
+  tech_stack jsonb,
+  github_url text,
+  linkedin_url text,
+  instagram_url text
+);
+
 -- ---- ROW LEVEL SECURITY (RLS) SETUP ----
 
 -- Enable RLS for all tables
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.portfolio_comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profile_settings ENABLE ROW LEVEL SECURITY;
 
 -- ---- POLICY CREATION ----
 
@@ -136,6 +195,10 @@ ON public.projects FOR SELECT TO public USING (true);
 CREATE POLICY "Public Read Access Policy for Certificates"
 ON public.certificates FOR SELECT TO public USING (true);
 
+-- Policy for 'profile_settings': Allow public read access
+CREATE POLICY "Public Read Access Policy for Profile Settings"
+ON public.profile_settings FOR SELECT TO public USING (true);
+
 -- Policies for 'portfolio_comments': Allow read for everyone, and insert for everyone (but not pinned)
 CREATE POLICY "Allow public read on portfolio_comments"
 ON public.portfolio_comments FOR SELECT TO public USING (true);
@@ -143,12 +206,12 @@ ON public.portfolio_comments FOR SELECT TO public USING (true);
 CREATE POLICY "Allow public insert on portfolio_comments"
 ON public.portfolio_comments FOR INSERT TO public WITH CHECK (is_pinned = false);
 
--- ---- STORAGE SETUP FOR COMMENT PROFILE IMAGES ----
+-- ---- STORAGE SETUP FOR IMAGES ----
 
 -- Create a public bucket for profile images
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('profile-images', 'profile-images', true)
-ON CONFLICT (id) DO NOTHING; -- Avoid errors if the bucket already exists
+ON CONFLICT (id) DO NOTHING;
 
 -- Policies for 'profile-images' bucket
 CREATE POLICY "Allow public to upload profile images"
@@ -159,52 +222,52 @@ ON storage.objects FOR SELECT TO public USING (bucket_id = 'profile-images');
 
 -- ---- EXAMPLE DATA INSERTION ----
 
--- Insert one example project
+-- Insert example project
 INSERT INTO public.projects ("Title", "Description", "Img", "Link", "Github", "Features", "TechStack") 
 VALUES (
-    'Example Project Title', 
-    'A simple description for this example project, explaining its main purpose and goals.', 
-    'REPLACE_WITH_YOUR_PROJECT_IMAGE_URL.png', 
-    'REPLACE_WITH_YOUR_LIVE_DEMO_URL.com', 
-    'REPLACE_WITH_YOUR_GITHUB_REPO_URL.com', 
-    '["Main Feature A", "Core Function B", "Key Ability C"]', 
-    '["React", "Supabase", "Tailwind CSS"]'
+    'Example Project', 
+    'A modern web application built with React and Tailwind CSS', 
+    'https://via.placeholder.com/800x600', 
+    'https://example.com', 
+    'https://github.com/achsan490/example', 
+    '["Responsive Design", "Modern UI/UX", "Fast Performance"]', 
+    '["React", "Tailwind CSS", "Vite"]'
 );
 
--- Insert one example certificate
-INSERT INTO public.certificates ("Img") 
-VALUES ('REPLACE_WITH_YOUR_CERTIFICATE_IMAGE_URL.png');
+-- Insert example certificate
+INSERT INTO public.certificates ("Img", "Title", "Issuer", "Date") 
+VALUES (
+    'https://via.placeholder.com/800x600',
+    'Web Development Certificate',
+    'Online Course Platform',
+    '2024'
+);
 
--- Insert one example comment
+-- Insert example comment
 INSERT INTO public.portfolio_comments (content, user_name) 
-VALUES ('Created By Fazri Lukman Nurrohman', 'fazrilukman');
+VALUES ('Welcome to my portfolio! Feel free to leave a comment.', 'achsan490');
 
+-- Insert profile settings
+INSERT INTO public.profile_settings (title, subtitle, tech_stack, github_url, linkedin_url, instagram_url)
+VALUES (
+    'Simple-Stack Developer',
+    'Web Developer|UI/UX Design|Mobile Developer|Tech Enthusiast',
+    '["React", "JavaScript", "Node.js", "Python", "Tailwind", "Next.js", "MongoDB", "Express"]',
+    'https://github.com/achsan490',
+    'https://www.linkedin.com/in/san-project-41a03029b',
+    'https://www.instagram.com/san49410'
+);
 ```
 
-### 3\. Enable Realtime (for Comment System)
+### 3. Enable Realtime (for Comment System)
 
-  - Go to **Table Editor > portofolio_comments**.
-  - Enable Realtime for the `portfolio_comments`.
+- Go to **Table Editor > portfolio_comments**
+- Click on the table settings
+- Enable **Realtime** for live comment updates
 
-## 🔧 Environment Variables Setup
+### 4. Configure Supabase Client
 
-Create a file named `.env` in the root of your project and add your Supabase credentials.
-
-```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
-**Important:**
-
-  - All environment variables must be prefixed with `VITE_` for Vite to access them.
-  - Restart your development server after creating or modifying the `.env` file.
-  - **Never** commit your `.env` file to version control. Ensure it's listed in your `.gitignore` file.
-
-### Configuration File (`supabase.js`)
-
-Ensure your Supabase client configuration file (e.g., `src/supabase.js`) uses these environment variables.
+Ensure your Supabase client configuration file (`src/supabase.js`) uses the environment variables:
 
 ```javascript
 import { createClient } from '@supabase/supabase-js'
@@ -213,35 +276,84 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Supabase URL and Anon Key are required. Check your .env file.")
+  console.warn("Supabase credentials not found. Some features may not work.")
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null
+```
+
+## 📁 Project Structure
+
+```
+portfolio_v2/
+├── public/              # Static assets
+├── src/
+│   ├── components/      # Reusable React components
+│   ├── Pages/          # Page components
+│   ├── supabase.js     # Supabase configuration
+│   ├── App.jsx         # Main app component
+│   ├── main.jsx        # Entry point
+│   └── index.css       # Global styles
+├── .env                # Environment variables (not committed)
+├── .env.example        # Environment variables template
+├── package.json        # Dependencies and scripts
+├── tailwind.config.js  # Tailwind CSS configuration
+├── vite.config.js      # Vite configuration
+└── README.md           # This file
 ```
 
 ## 🚨 Troubleshooting
 
 If you encounter issues while running the project:
 
-  - Ensure Node.js is correctly installed.
-  - Verify you're in the correct project directory.
-  - Check that all dependencies are installed without errors.
-  - Make sure your Supabase configuration in the `.env` file is correct and the server has been restarted.
-  - Clear your browser cache and try again.
+- **Dependencies Error**: Try `npm install --legacy-peer-deps`
+- **Environment Variables**: Ensure `.env` file exists and contains correct values
+- **Port Already in Use**: Vite will automatically use another port
+- **Supabase Connection**: Verify your Supabase URL and anon key are correct
+- **Build Errors**: Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
 
-## 📝 Usage & Credits
+## 🎨 Customization
 
-We would appreciate it if you decide to use this project. Please include proper credit when using it. Thank you\! 🙏
+### Changing Colors
+
+The project uses Tailwind CSS. You can customize colors in `tailwind.config.js`:
+
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',  // Change primary color
+        // Add more custom colors
+      }
+    }
+  }
+}
+```
+
+### Updating Profile Information
+
+Edit the profile data in Supabase `profile_settings` table or update the default values in `src/Pages/Home.jsx`.
+
+## 📝 License & Usage
+
+Feel free to use this project as inspiration for your own portfolio. If you do use it, please give proper credit. Thank you! 🙏
 
 ## 📞 Contact
 
-If you have any questions or need help with the setup, feel free to reach out\!
+If you have any questions or need help with the setup, feel free to reach out!
 
-**Fazri Lukman Nurrohman**
+**Achsanul Khuluq Izzulchaq**
 
-  - Website: [https://www.fazrilukman.my.id/](https://www.fazrilukman.my.id/)
-  - GitHub: [Fazrilukman](https://github.com/fazrilukman)
+- 🌐 Website: [https://sann.my.id/](https://sann.my.id/)
+- 💼 GitHub: [@achsan490](https://github.com/achsan490)
+- 💼 LinkedIn: [Achsanul Khuluq](https://www.linkedin.com/in/san-project-41a03029b)
+- 📷 Instagram: [@san49410](https://www.instagram.com/san49410)
 
------
+---
 
-⭐ If this project helped you, please consider giving it a star on GitHub\!
+⭐ If this project helped you, please consider giving it a star on GitHub!
+
+**Made with ❤️ by Achsanul Khuluq Izzulchaq**
