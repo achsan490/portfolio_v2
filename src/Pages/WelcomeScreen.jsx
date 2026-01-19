@@ -192,7 +192,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
                         <span className="flex h-7 sm:h-9 w-7 sm:w-9 items-center justify-center rounded-full bg-blue-500/20 text-blue-300 flex-shrink-0">
                           <Globe className="w-3 sm:w-4 h-3 sm:h-4" />
                         </span>
-                        <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent text-sm sm:text-lg md:text-xl">
+                        <span className="bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent text-sm sm:text-lg md:text-xl">
                           <TypewriterEffect text={typewriterText} speed={typewriterSpeed} />
                         </span>
                       </a>
