@@ -169,6 +169,22 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 14,
+      Title: "AI Hunter",
+      Description: "AI Hunter is a curated directory platform for discovering top-tier AI tools. It features advanced filtering, tool categories, and detailed insights to help users find the perfect AI solution.",
+      Link: "https://ai-hunter-seven.vercel.app/",
+      Img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop",
+      category: "Project"
+    },
+    {
+      id: 13,
+      Title: "CineStream",
+      Description: "A modern movie streaming platform with a vast library of films, featuring a sleek user interface and seamless viewing experience.",
+      Link: "https://movie-gules-nine.vercel.app/",
+      Img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000&auto=format&fit=crop",
+      category: "Project"
+    },
+    {
       id: 1,
       Title: "Reward System",
       Description: "A gamified reward platform featuring point tracking, redemption system, and intuitive user dashboard.",
@@ -178,10 +194,10 @@ export default function FullWidthTabs() {
     },
     {
       id: 2,
-      Title: "Personal Portfolio",
-      Description: "Modern dark-themed portfolio website built with React and Tailwind CSS featuring smooth animations.",
-      Link: "https://vercel.com/achsans-projects-b0313f78",
-      Img: "/personal-portfolio.png",
+      Title: "BEM UNWAHA 2025",
+      Description: "Official website for the Student Executive Board (BEM) of UNWAHA 2025. A central hub for student news, organizational updates, and event management.",
+      Link: "https://bem-u.vercel.app/",
+      Img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1000&auto=format&fit=crop",
       category: "Project"
     },
     {
@@ -194,10 +210,10 @@ export default function FullWidthTabs() {
     },
     {
       id: 4,
-      Title: "Nexus E-Commerce",
-      Description: "Scalable e-commerce platform with real-time product filtering, cart management, and payment gateway.",
-      Link: "#",
-      Img: "/ecommerce.png",
+      Title: "MerahPutih Premium Store",
+      Description: "A full-stack e-commerce solution featuring a powerful admin control panel and a responsive mobile shopping interface.",
+      Link: "",
+      Img: "/merahputihstore.png",
       category: "Project"
     },
 

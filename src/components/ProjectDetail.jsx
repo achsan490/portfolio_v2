@@ -104,6 +104,28 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 14,
+      Title: "AI Hunter",
+      Description: "AI Hunter is a premium directory platform designed to help users navigate the rapidly evolving AI landscape. The application provides a curated list of top AI tools across various categories, from productivity and development to creative arts. With a focus on user experience, AI Hunter offers powerful search capabilities, detailed tool profiles, and a clean, modern interface that makes discovery effortless.",
+      Link: "https://ai-hunter-seven.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop",
+      category: "Project",
+      TechStack: ["React", "Tailwind", "Vite", "Lucide React", "Framer Motion"],
+      Features: ["Curated Tool List", "Advanced Search", "Category Filtering", "Tool Detail Pages", "Responsive Design"]
+    },
+    {
+      id: 13,
+      Title: "CineStream",
+      Description: "CineStream is a modern movie streaming platform that provides users with an immersive cinematic experience. Featuring a clean and intuitive interface, users can browse through a vast collection of movies, view detailed information, and enjoy high-quality streaming. The platform is built with performance in mind, ensuring fast load times and smooth navigation.",
+      Link: "https://movie-gules-nine.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000&auto=format&fit=crop",
+      category: "Project",
+      TechStack: ["React", "Tailwind", "Vite", "Lucide React", "Vercel"],
+      Features: ["Movie Library", "Responsive UI", "Search Functionality", "Detailed Movie Info", "Streaming Player"]
+    },
+    {
       id: 1,
       Title: "Reward System",
       Description: "A comprehensive gamified reward platform designed to boost user engagement. This system allows users to earn points through various activities, track their progress on an interactive dashboard, and redeem points for exciting rewards. The application features a robust backend for transaction management and a sleek, user-friendly frontend.",
@@ -116,14 +138,14 @@ const ProjectDetails = () => {
     },
     {
       id: 2,
-      Title: "Personal Portfolio",
-      Description: "A modern, highly responsive portfolio website designed to showcase my skills and projects. Built with performance and aesthetics in mind, it features a dark-themed UI, smooth scroll animations, and a dynamic project gallery. The site is optimized for SEO and provides a seamless user experience across all devices.",
-      Link: "https://vercel.com/achsans-projects-b0313f78",
+      Title: "BEM UNWAHA 2025",
+      Description: "BEM UNWAHA 2025 is the official digital presence for the Student Executive Board (Badan Eksekutif Mahasiswa) of Universitas KH. A. Wahab Hasbullah for the 2025 period. Under the 'Kabinet Sinergi Perubahan', this platform serves as a vital communication bridge between the organization and the student body. It features comprehensive news sections, event galleries, organizational structure details, and serves as a formal archive for BEM activities.",
+      Link: "https://bem-u.vercel.app/",
       Github: "https://github.com/achsan490",
-      Img: "/personal-portfolio.png",
+      Img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1000&auto=format&fit=crop",
       category: "Project",
-      TechStack: ["React", "Tailwind", "Framer Motion", "Vite", "Lucide React"],
-      Features: ["Responsive Design", "Dark Mode", "Smooth Animations", "Contact Form", "Project Filtering"]
+      TechStack: ["React", "Tailwind", "Vite", "Lucide React", "AOS"],
+      Features: ["News Management", "Event Calendar", "Organizational Gallery", "Responsive Navigation", "Information Hub"]
     },
     {
       id: 3,
@@ -138,14 +160,14 @@ const ProjectDetails = () => {
     },
     {
       id: 4,
-      Title: "Nexus E-Commerce",
-      Description: "A scalable and feature-rich e-commerce platform built for modern retail. Nexus offers a seamless shopping experience with real-time product filtering, a secure shopping cart, and integrated payment gateways. The admin dashboard provides powerful tools for product, order, and customer management.",
-      Link: "#",
+      Title: "MerahPutih Premium Store",
+      Description: "MerahPutih Premium Store is a comprehensive e-commerce ecosystem designed for high-end retail experiences. The platform consists of two main components: a robust Admin Control Panel for inventory, order, and sales management, and a sleek, mobile-first user interface for customers. It features real-time stock tracking, automated order notifications, and a premium aesthetic that aligns with modern branding standards.",
+      Link: "",
       Github: "https://github.com/achsan490",
-      Img: "/ecommerce.png",
+      Img: "/merahputihstore.png",
       category: "Project",
-      TechStack: ["Next.js", "TypeScript", "Stripe", "Prisma", "Tailwind"],
-      Features: ["Product Filtering", "Shopping Cart", "Payment Gateway", "User Auth", "Order Tracking"]
+      TechStack: ["PHP", "MySQL", "Tailwind CSS", "Javascript", "Bootstrap"],
+      Features: ["Admin Dashboard", "Mobile-First Design", "Order Management", "Inventory Control", "Revenue Analytics"]
     },
 
     // --- DESIGNS ---
