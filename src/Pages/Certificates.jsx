@@ -5,6 +5,57 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { Award, TrendingUp } from "lucide-react";
 
+const defaultCertificates = [
+  {
+    id: 1,
+    Img: "/certificates/sql-certificate.jpg",
+    title: "Introduction to SQL",
+    issuer: "Sololearn",
+    date: "April 21, 2025",
+    description: "Successfully completed the course by demonstrating theoretical and practical understanding of SQL fundamentals, including database queries, data manipulation, and relational database concepts."
+  },
+  {
+    id: 2,
+    Img: "/certificates/python-essentials.jpg",
+    title: "Python Essentials 1",
+    issuer: "Cisco Networking Academy & Python Institute",
+    date: "June 07, 2026",
+    description: "Successfully completed the Python Essentials 1 course, demonstrating a foundational understanding of Python programming concepts including syntax, data types, control flow, functions, and basic algorithms."
+  },
+  {
+    id: 3,
+    Img: "/certificates/javascript-essentials.jpg",
+    title: "JavaScript Essentials 1",
+    issuer: "Cisco Networking Academy & JS Institute",
+    date: "June 04, 2026",
+    description: "Successfully completed the JavaScript Essentials 1 course, establishing a robust foundation in JavaScript core programming concepts, control structures, operations, and basic scripting."
+  },
+  {
+    id: 4,
+    Img: "/certificates/youtube-music.jpg",
+    title: "Sertifikasi YouTube Music",
+    issuer: "YouTube Music",
+    date: "June 04, 2026",
+    description: "Certified in YouTube Music Channel Management, demonstrating proficiency in managing official artist channels, audience growth strategies, and content optimization techniques."
+  },
+  {
+    id: 5,
+    Img: "/certificates/financial-literacy.jpg",
+    title: "Introduction to Financial Literacy",
+    issuer: "Dicoding Academy",
+    date: "June 04, 2026",
+    description: "Successfully completed the Introduction to Financial Literacy course, demonstrating core competencies in basic financial planning, budgeting, investment principles, and wealth management."
+  },
+  {
+    id: 6,
+    Img: "/certificates/javascript-statement.jpg",
+    title: "Statement of Achievement - JavaScript Essentials 1",
+    issuer: "Cisco Networking Academy & JS Institute",
+    date: "June 04, 2026",
+    description: "Awarded student level credential for proficiently demonstrating understanding of variables, data types, program flow, loops, functions, and exceptions in JavaScript."
+  }
+];
+
 const Certificates = () => {
     const [certificates, setCertificates] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,11 +76,9 @@ const Certificates = () => {
 
             // Check if Supabase is configured
             if (!supabase) {
-                console.warn("⚠️ Supabase not configured. Using cached data.");
-                const cached = localStorage.getItem('certificates');
-                if (cached) {
-                    setCertificates(JSON.parse(cached));
-                }
+                console.warn("⚠️ Supabase not configured. Using default data.");
+                setCertificates(defaultCertificates);
+                localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
                 setLoading(false);
                 return;
             }
@@ -41,17 +90,15 @@ const Certificates = () => {
 
             if (error) throw error;
 
-            setCertificates(data || []);
+            setCertificates(data && data.length > 0 ? data : defaultCertificates);
             if (data && data.length > 0) {
                 localStorage.setItem("certificates", JSON.stringify(data));
             }
         } catch (error) {
             console.error("Error fetching certificates:", error);
-            // Fallback to cached data
-            const cached = localStorage.getItem('certificates');
-            if (cached) {
-                setCertificates(JSON.parse(cached));
-            }
+            // Fallback to default data
+            setCertificates(defaultCertificates);
+            localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
         } finally {
             setLoading(false);
         }

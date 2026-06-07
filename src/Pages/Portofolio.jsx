@@ -169,6 +169,14 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 15,
+      Title: "YXGClip",
+      Description: "A Streamlit web application designed to trim, extract, and download highlights and short clips from YouTube videos.",
+      Link: "https://yxgclip.streamlit.app/",
+      Img: "/yxgclip.png",
+      category: "Project"
+    },
+    {
       id: 14,
       Title: "AI Hunter",
       Description: "AI Hunter is a curated directory platform for discovering top-tier AI tools. It features advanced filtering, tool categories, and detailed insights to help users find the perfect AI solution.",
@@ -294,16 +302,59 @@ export default function FullWidthTabs() {
       issuer: "Sololearn",
       date: "April 21, 2025",
       description: "Successfully completed the course by demonstrating theoretical and practical understanding of SQL fundamentals, including database queries, data manipulation, and relational database concepts."
+    },
+    {
+      id: 2,
+      Img: "/certificates/python-essentials.jpg",
+      title: "Python Essentials 1",
+      issuer: "Cisco Networking Academy & Python Institute",
+      date: "June 07, 2026",
+      description: "Successfully completed the Python Essentials 1 course, demonstrating a foundational understanding of Python programming concepts including syntax, data types, control flow, functions, and basic algorithms."
+    },
+    {
+      id: 3,
+      Img: "/certificates/javascript-essentials.jpg",
+      title: "JavaScript Essentials 1",
+      issuer: "Cisco Networking Academy & JS Institute",
+      date: "June 04, 2026",
+      description: "Successfully completed the JavaScript Essentials 1 course, establishing a robust foundation in JavaScript core programming concepts, control structures, operations, and basic scripting."
+    },
+    {
+      id: 4,
+      Img: "/certificates/youtube-music.jpg",
+      title: "Sertifikasi YouTube Music",
+      issuer: "YouTube Music",
+      date: "June 04, 2026",
+      description: "Certified in YouTube Music Channel Management, demonstrating proficiency in managing official artist channels, audience growth strategies, and content optimization techniques."
+    },
+    {
+      id: 5,
+      Img: "/certificates/financial-literacy.jpg",
+      title: "Introduction to Financial Literacy",
+      issuer: "Dicoding Academy",
+      date: "June 04, 2026",
+      description: "Successfully completed the Introduction to Financial Literacy course, demonstrating core competencies in basic financial planning, budgeting, investment principles, and wealth management."
+    },
+    {
+      id: 6,
+      Img: "/certificates/javascript-statement.jpg",
+      title: "Statement of Achievement - JavaScript Essentials 1",
+      issuer: "Cisco Networking Academy & JS Institute",
+      date: "June 04, 2026",
+      description: "Awarded student level credential for proficiently demonstrating understanding of variables, data types, program flow, loops, functions, and exceptions in JavaScript."
     }
   ];
 
   const fetchData = useCallback(async () => {
     // Check if Supabase is configured
     if (!supabase) {
-      console.warn("⚠️ Supabase not configured. Using default/cached data.");
-      setProjects(prev => prev.length > 0 ? prev : defaultProjects);
-      setCertificates(prev => prev.length > 0 ? prev : defaultCertificates);
-      setTechStacks(prev => prev.length > 0 ? prev : defaultTechStacks);
+      console.warn("⚠️ Supabase not configured. Using default data.");
+      setProjects(defaultProjects);
+      setCertificates(defaultCertificates);
+      setTechStacks(defaultTechStacks);
+      localStorage.setItem("projects", JSON.stringify(defaultProjects));
+      localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
+      localStorage.setItem("tech_stack", JSON.stringify(defaultTechStacks));
       return;
     }
 

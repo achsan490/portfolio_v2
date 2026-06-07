@@ -157,7 +157,11 @@ const AboutPage = () => {
   // Fetch data from Supabase
   useEffect(() => {
     const fetchStats = async () => {
-      if (!supabase) return;
+      if (!supabase) {
+        setTotalProjects(15);
+        setTotalCertificates(6);
+        return;
+      }
 
       try {
         const [projectsRes, certificatesRes] = await Promise.all([
@@ -165,10 +169,12 @@ const AboutPage = () => {
           supabase.from('certificates').select('*', { count: 'exact', head: true })
         ]);
 
-        setTotalProjects(projectsRes.count || 0);
-        setTotalCertificates(certificatesRes.count || 0);
+        setTotalProjects(projectsRes.count || 15);
+        setTotalCertificates(certificatesRes.count || 6);
       } catch (error) {
         console.error('Error fetching stats:', error);
+        setTotalProjects(15);
+        setTotalCertificates(6);
       }
     };
 
