@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, ExternalLink, Github, Code2, Star,
-  ChevronRight, Layers, Layout, Globe, Package, Cpu, Code,
+  ChevronRight, Layers, Layout, Globe, Package, Cpu, Code, Lock,
 } from "lucide-react";
 import Swal from 'sweetalert2';
 
@@ -162,12 +162,17 @@ const ProjectDetails = () => {
       id: 4,
       Title: "MerahPutih Premium Store",
       Description: "MerahPutih Premium Store is a comprehensive e-commerce ecosystem designed for high-end retail experiences. The platform consists of two main components: a robust Admin Control Panel for inventory, order, and sales management, and a sleek, mobile-first user interface for customers. It features real-time stock tracking, automated order notifications, and a premium aesthetic that aligns with modern branding standards.",
-      Link: "",
+      Link: "https://merahputihpremium.free.je/",
       Github: "https://github.com/achsan490",
       Img: "/merahputihstore.png",
       category: "Project",
       TechStack: ["PHP", "MySQL", "Tailwind CSS", "Javascript", "Bootstrap"],
-      Features: ["Admin Dashboard", "Mobile-First Design", "Order Management", "Inventory Control", "Revenue Analytics"]
+      Features: ["Admin Dashboard", "Mobile-First Design", "Order Management", "Inventory Control", "Revenue Analytics"],
+      AdminInfo: {
+        Link: "https://merahputihpremium.free.je/admin/index.php",
+        Username: "admin",
+        Password: "admin123"
+      }
     },
 
     // --- DESIGNS ---
@@ -347,6 +352,42 @@ const ProjectDetails = () => {
                   {project.Description}
                 </p>
               </div>
+
+              {project.AdminInfo && (
+                <div className="p-4 md:p-5 rounded-2xl bg-white/[0.02] border border-blue-500/20 backdrop-blur-xl space-y-3 relative overflow-hidden group hover:border-blue-500/40 transition-colors duration-300 animate-fadeIn">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500" />
+                  <div className="flex items-center gap-2.5 text-blue-400 font-semibold">
+                    <Lock className="w-5 h-5" />
+                    <span>Demo Admin Panel</span>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Akses dashboard admin untuk mengelola produk, transaksi, dan data penjualan menggunakan link dan kredensial berikut:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-sm">
+                    <div className="bg-[#0a0a1a]/50 p-3 rounded-xl border border-white/5 flex flex-col justify-center">
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Admin Panel Link</span>
+                      <a 
+                        href={project.AdminInfo.Link} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-blue-400 hover:text-blue-300 font-medium inline-flex items-center gap-1.5 transition-colors mt-1"
+                      >
+                        Go to Admin Panel <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                    <div className="bg-[#0a0a1a]/50 p-3 rounded-xl border border-white/5 flex flex-col justify-center">
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Login Credentials</span>
+                      <div className="text-gray-300 mt-1 flex flex-wrap items-center gap-1 text-xs sm:text-sm">
+                        <span>User:</span>
+                        <code className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono font-bold">{project.AdminInfo.Username}</code>
+                        <span className="mx-1">|</span>
+                        <span>Pass:</span>
+                        <code className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono font-bold">{project.AdminInfo.Password}</code>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <ProjectStats project={project} />
 
