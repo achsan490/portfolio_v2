@@ -169,6 +169,14 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 16,
+      Title: "Rizmahira Shop",
+      Description: "Rizmahira Shop is a trusted online store featuring selected products across categories like food, accessories, fashion, and beauty, with easy WhatsApp checkout integration.",
+      Link: "https://rizmahira.vercel.app/",
+      Img: "/rizmahira.png",
+      category: "Project"
+    },
+    {
       id: 15,
       Title: "YXGClip",
       Description: "A Streamlit web application designed to trim, extract, and download highlights and short clips from YouTube videos.",
@@ -220,7 +228,7 @@ export default function FullWidthTabs() {
       id: 4,
       Title: "MerahPutih Premium Store",
       Description: "A full-stack e-commerce solution featuring a powerful admin control panel and a responsive mobile shopping interface.",
-      Link: "https://merahputihpremium.free.je/",
+      Link: "https://merahputihpremium.free.je/admin/index.php",
       Img: "/merahputihstore.png",
       category: "Project"
     },
