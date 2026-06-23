@@ -104,6 +104,17 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 17,
+      Title: "Caffè POS",
+      Description: "Caffè POS is a modern, premium cashier (Point of Sale) web application designed specifically for cafe owners. It features an interactive product catalog with search and category filters, an automated shopping cart with discount code logic, PB1 tax and service fee calculations, multiple payment options (Cash with cash suggestion/change calculator, simulated QRIS, and EDC Card), an operations dashboard visualizing sales metrics and charts, a product catalog management system, and comprehensive transaction logs with export capabilities (JSON/CSV) and print-ready receipts.",
+      Link: "https://kasir-cafe-modern.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/caffe-pos.png",
+      category: "Project",
+      TechStack: ["HTML", "CSS", "Javascript", "Lucide Icons", "Vercel"],
+      Features: ["Sales Analytics Dashboard", "Cashier POS System", "Menu Management Catalog", "Print-Ready Receipts", "CSV & JSON Export", "Multi-payment Simulations (QRIS/Card/Cash)"]
+    },
+    {
       id: 14,
       Title: "AI Hunter",
       Description: "AI Hunter is a premium directory platform designed to help users navigate the rapidly evolving AI landscape. The application provides a curated list of top AI tools across various categories, from productivity and development to creative arts. With a focus on user experience, AI Hunter offers powerful search capabilities, detailed tool profiles, and a clean, modern interface that makes discovery effortless.",

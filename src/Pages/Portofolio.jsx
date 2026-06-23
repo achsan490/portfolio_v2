@@ -169,6 +169,14 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 17,
+      Title: "Caffè POS",
+      Description: "Caffè POS is a modern, feature-rich Point of Sale (POS) system designed for cafes, featuring receipt generation, sales dashboard, product management, and real-time transaction reports.",
+      Link: "https://kasir-cafe-modern.vercel.app/",
+      Img: "/caffe-pos.png",
+      category: "Project"
+    },
+    {
       id: 16,
       Title: "Rizmahira Shop",
       Description: "Rizmahira Shop is a trusted online store featuring selected products across categories like food, accessories, fashion, and beauty, with easy WhatsApp checkout integration.",
