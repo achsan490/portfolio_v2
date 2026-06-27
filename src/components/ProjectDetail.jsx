@@ -104,6 +104,17 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 18,
+      Title: "LaporApp KKN",
+      Description: "LaporApp KKN is a web-based individual activity report generation application designed specifically for KKN (Kuliah Kerja Nyata) students and volunteers. The application streamlines the process of documenting daily activities, volunteer roles, target groups, and photos. It offers real-time completeness progress tracking, and allows users to export their finished reports into professionally formatted PDF or Microsoft Word (DOCX) files in seconds, all processed client-side in the browser for maximum privacy.",
+      Link: "https://laporan-individu.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/laporan-individu.png",
+      category: "Project",
+      TechStack: ["React", "CSS", "Vite", "docx", "jspdf", "html2canvas"],
+      Features: ["Step-by-step Report Creator", "Real-time Progress Tracker", "Interactive Identity Forms", "Activity Photo Upload", "Word Document (.docx) Export", "PDF Document (.pdf) Export", "Local Storage Auto-save"]
+    },
+    {
       id: 17,
       Title: "Caffè POS",
       Description: "Caffè POS is a modern, premium cashier (Point of Sale) web application designed specifically for cafe owners. It features an interactive product catalog with search and category filters, an automated shopping cart with discount code logic, PB1 tax and service fee calculations, multiple payment options (Cash with cash suggestion/change calculator, simulated QRIS, and EDC Card), an operations dashboard visualizing sales metrics and charts, a product catalog management system, and comprehensive transaction logs with export capabilities (JSON/CSV) and print-ready receipts.",

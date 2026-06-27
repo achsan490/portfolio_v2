@@ -169,6 +169,14 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 18,
+      Title: "LaporApp KKN",
+      Description: "A web-based helper application for KKN and volunteer students to generate individual reports and export them to PDF and Microsoft Word format.",
+      Link: "https://laporan-individu.vercel.app/",
+      Img: "/laporan-individu.png",
+      category: "Project"
+    },
+    {
       id: 17,
       Title: "Caffè POS",
       Description: "Caffè POS is a modern, feature-rich Point of Sale (POS) system designed for cafes, featuring receipt generation, sales dashboard, product management, and real-time transaction reports.",
