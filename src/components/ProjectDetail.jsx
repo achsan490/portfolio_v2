@@ -104,6 +104,17 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 19,
+      Title: "Web Desa Sukamaju",
+      Description: "Website Resmi Desa Sukamaju adalah platform digital pemerintah desa yang dibangun menggunakan Next.js untuk menyajikan informasi, layanan, dan potensi Desa Sukamaju, Kecamatan Ciawi, Kabupaten Bogor secara modern dan responsif. Platform ini menyediakan berita desa terkini, agenda kegiatan, galeri foto, profil desa, data statistik penduduk, layanan pengajuan surat secara online, serta informasi potensi dan UMKM lokal.",
+      Link: "https://web-desaaaa.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/web-desa-sukamaju.png",
+      category: "Project",
+      TechStack: ["Next.js", "Tailwind", "React", "Cloudinary", "Vercel"],
+      Features: ["Berita & Informasi Desa", "Agenda Kegiatan Desa", "Galeri Foto & Video", "Profil & Data Desa", "Layanan Surat Online", "Informasi Potensi Desa", "Statistik Penduduk", "Responsive & Modern UI"]
+    },
+    {
       id: 18,
       Title: "LaporApp KKN",
       Description: "LaporApp KKN is a web-based individual activity report generation application designed specifically for KKN (Kuliah Kerja Nyata) students and volunteers. The application streamlines the process of documenting daily activities, volunteer roles, target groups, and photos. It offers real-time completeness progress tracking, and allows users to export their finished reports into professionally formatted PDF or Microsoft Word (DOCX) files in seconds, all processed client-side in the browser for maximum privacy.",

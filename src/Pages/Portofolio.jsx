@@ -169,6 +169,14 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 19,
+      Title: "Web Desa Sukamaju",
+      Description: "Website resmi Desa Sukamaju, Kecamatan Ciawi, Kabupaten Bogor. Dilengkapi fitur berita desa, agenda kegiatan, galeri, layanan surat online, data desa, dan informasi potensi desa.",
+      Link: "https://web-desaaaa.vercel.app/",
+      Img: "/web-desa-sukamaju.png",
+      category: "Project"
+    },
+    {
       id: 18,
       Title: "LaporApp KKN",
       Description: "A web-based helper application for KKN and volunteer students to generate individual reports and export them to PDF and Microsoft Word format.",
