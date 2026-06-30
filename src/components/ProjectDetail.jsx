@@ -105,9 +105,9 @@ const ProjectDetails = () => {
     // --- PROJECTS ---
     {
       id: 19,
-      Title: "Web Desa Sukamaju",
-      Description: "Website Resmi Desa Sukamaju adalah platform digital pemerintah desa yang dibangun menggunakan Next.js untuk menyajikan informasi, layanan, dan potensi Desa Sukamaju, Kecamatan Ciawi, Kabupaten Bogor secara modern dan responsif. Platform ini menyediakan berita desa terkini, agenda kegiatan, galeri foto, profil desa, data statistik penduduk, layanan pengajuan surat secara online, serta informasi potensi dan UMKM lokal.",
-      Link: "https://web-desaaaa.vercel.app/",
+      Title: "Web Desa Pojok Klitih",
+      Description: "Website Resmi Desa Pojok Klitih adalah platform digital pemerintah desa yang dibangun menggunakan Next.js untuk menyajikan informasi, layanan, dan potensi Desa Pojok Klitih, Kecamatan Plandaan, Kabupaten Jombang secara modern dan responsif. Platform ini menyediakan berita desa terkini, agenda kegiatan, galeri foto, profil desa, data statistik penduduk, layanan pengajuan surat secara online, serta informasi potensi dan UMKM lokal.",
+      Link: "https://desapojokklitih.vercel.app/",
       Github: "https://github.com/achsan490",
       Img: "/web-desa-sukamaju.png",
       category: "Project",

@@ -170,9 +170,9 @@ export default function FullWidthTabs() {
     // --- PROJECTS ---
     {
       id: 19,
-      Title: "Web Desa Sukamaju",
-      Description: "Website resmi Desa Sukamaju, Kecamatan Ciawi, Kabupaten Bogor. Dilengkapi fitur berita desa, agenda kegiatan, galeri, layanan surat online, data desa, dan informasi potensi desa.",
-      Link: "https://web-desaaaa.vercel.app/",
+      Title: "Web Desa Pojok Klitih",
+      Description: "Website resmi Desa Pojok Klitih, Kecamatan Plandaan, Kabupaten Jombang. Dilengkapi fitur berita desa, agenda kegiatan, galeri, layanan surat online, data desa, dan informasi potensi desa.",
+      Link: "https://desapojokklitih.vercel.app/",
       Img: "/web-desa-sukamaju.png",
       category: "Project"
     },
