@@ -10,7 +10,10 @@ import {
   Activity
 } from 'lucide-react';
 
+import { getLocalComments, getLocalPinnedComment } from '../utils/dummyComments';
+
 const StatCard = ({ title, value, icon: Icon, color, trend }) => (
+
   <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
     <div className="flex items-start justify-between">
       <div>
@@ -48,35 +51,58 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      if (!supabase) {
-        console.warn('Supabase not configured');
-        setLoading(false);
-        return;
+      let projectCount = 0;
+      let certCount = 0;
+      let commentsCount = 0;
+      let pinnedCount = 0;
+      let recent = [];
+
+      if (supabase) {
+        try {
+          const [projectsRes, certificatesRes, commentsRes, pinnedRes] = await Promise.all([
+            supabase.from('projects').select('*', { count: 'exact', head: true }),
+            supabase.from('certificates').select('*', { count: 'exact', head: true }),
+            supabase.from('portfolio_comments').select('*', { count: 'exact', head: true }),
+            supabase.from('portfolio_comments').select('*', { count: 'exact', head: true }).eq('is_pinned', true)
+          ]);
+
+          projectCount = projectsRes.count || 0;
+          certCount = certificatesRes.count || 0;
+          commentsCount = commentsRes.count || 0;
+          pinnedCount = pinnedRes.count || 0;
+
+          const { data: recentComments } = await supabase
+            .from('portfolio_comments')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (recentComments) recent = recentComments;
+        } catch (e) {
+          console.warn('Supabase fetch failed in AdminDashboard:', e);
+        }
       }
 
-      // Fetch all stats in parallel
-      const [projectsRes, certificatesRes, commentsRes, pinnedRes] = await Promise.all([
-        supabase.from('projects').select('*', { count: 'exact', head: true }),
-        supabase.from('certificates').select('*', { count: 'exact', head: true }),
-        supabase.from('portfolio_comments').select('*', { count: 'exact', head: true }),
-        supabase.from('portfolio_comments').select('*', { count: 'exact', head: true }).eq('is_pinned', true)
-      ]);
+      if (commentsCount === 0) {
+        const localPinned = getLocalPinnedComment();
+        const localRegular = getLocalComments();
+        const allLocal = [];
+        if (localPinned) allLocal.push(localPinned);
+        if (localRegular) allLocal.push(...localRegular);
 
-      // Fetch recent comments for activity
-      const { data: recentComments } = await supabase
-        .from('portfolio_comments')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        commentsCount = allLocal.length;
+        pinnedCount = localPinned ? 1 : 0;
+        recent = allLocal.slice(0, 5);
+      }
 
       setStats({
-        projects: projectsRes.count || 0,
-        certificates: certificatesRes.count || 0,
-        comments: commentsRes.count || 0,
-        pinnedComments: pinnedRes.count || 0
+        projects: projectCount,
+        certificates: certCount,
+        comments: commentsCount,
+        pinnedComments: pinnedCount
       });
 
-      setRecentActivity(recentComments || []);
+      setRecentActivity(recent);
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {

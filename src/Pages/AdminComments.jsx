@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import { supabase } from '../supabase';
 import {
+  getLocalComments,
+  getLocalPinnedComment,
+  saveLocalComments,
+  saveLocalPinnedComment
+} from '../utils/dummyComments';
+import {
   Trash2,
   Search,
   Pin,
@@ -26,19 +32,25 @@ const AdminComments = () => {
   const fetchComments = async () => {
     try {
       setLoading(true);
-      if (!supabase) {
-        console.warn('Supabase not configured');
-        setLoading(false);
-        return;
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('portfolio_comments')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setComments(data);
+          return;
+        }
       }
 
-      const { data, error } = await supabase
-        .from('portfolio_comments')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setComments(data || []);
+      // Local storage fallback
+      const pinned = getLocalPinnedComment();
+      const regular = getLocalComments();
+      const allLocal = [];
+      if (pinned) allLocal.push(pinned);
+      if (regular) allLocal.push(...regular);
+      setComments(allLocal);
     } catch (error) {
       console.error('Error fetching comments:', error);
       Swal.fire('Error', 'Failed to fetch comments', 'error');
@@ -49,16 +61,48 @@ const AdminComments = () => {
 
   const handleTogglePin = async (comment) => {
     try {
-      if (!supabase) {
-        throw new Error('Supabase not configured');
+      if (supabase) {
+        const { error } = await supabase
+          .from('portfolio_comments')
+          .update({ is_pinned: !comment.is_pinned })
+          .eq('id', comment.id);
+
+        if (!error) {
+          await Swal.fire({
+            icon: 'success',
+            title: comment.is_pinned ? 'Comment Unpinned' : 'Comment Pinned',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
+          });
+          await fetchComments();
+          return;
+        }
       }
 
-      const { error } = await supabase
-        .from('portfolio_comments')
-        .update({ is_pinned: !comment.is_pinned })
-        .eq('id', comment.id);
+      // Local storage pin toggle
+      const pinned = getLocalPinnedComment();
+      let regular = getLocalComments();
 
-      if (error) throw error;
+      if (comment.is_pinned) {
+        // Unpin
+        saveLocalPinnedComment(null);
+        const unpinnedComment = { ...comment, is_pinned: false };
+        regular = [unpinnedComment, ...regular];
+        saveLocalComments(regular);
+      } else {
+        // Pin this comment, unpin previous pinned if any
+        if (pinned) {
+          const oldPinned = { ...pinned, is_pinned: false };
+          regular = [oldPinned, ...regular.filter(c => c.id !== comment.id)];
+        } else {
+          regular = regular.filter(c => c.id !== comment.id);
+        }
+        const newPinned = { ...comment, is_pinned: true };
+        saveLocalPinnedComment(newPinned);
+        saveLocalComments(regular);
+      }
 
       await Swal.fire({
         icon: 'success',
@@ -91,16 +135,27 @@ const AdminComments = () => {
 
     if (result.isConfirmed) {
       try {
-        if (!supabase) {
-          throw new Error('Supabase not configured');
+        if (supabase) {
+          const { error } = await supabase
+            .from('portfolio_comments')
+            .delete()
+            .eq('id', id);
+
+          if (!error) {
+            await Swal.fire('Deleted!', 'Comment has been deleted.', 'success');
+            await fetchComments();
+            return;
+          }
         }
 
-        const { error } = await supabase
-          .from('portfolio_comments')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
+        // Local storage delete
+        const pinned = getLocalPinnedComment();
+        if (pinned && pinned.id === id) {
+          saveLocalPinnedComment(null);
+        } else {
+          const regular = getLocalComments().filter(c => c.id !== id);
+          saveLocalComments(regular);
+        }
 
         await Swal.fire('Deleted!', 'Comment has been deleted.', 'success');
         await fetchComments();
@@ -113,6 +168,7 @@ const AdminComments = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
+
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'long',
@@ -265,17 +321,15 @@ const AdminComments = () => {
                 <div className="flex items-start gap-4">
                   {/* Profile Image */}
                   <div className="flex-shrink-0">
-                    {comment.profile_image ? (
-                      <img
-                        src={comment.profile_image}
-                        alt={comment.user_name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-500/30"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                        <UserCircle2 className="w-7 h-7 text-blue-400" />
-                      </div>
-                    )}
+                    <img
+                      src={comment.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user_name)}&background=2563eb&color=ffffff&bold=true`}
+                      alt={comment.user_name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-blue-500/30"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user_name)}&background=2563eb&color=ffffff&bold=true`;
+                      }}
+                    />
                   </div>
 
                   {/* Comment Content */}

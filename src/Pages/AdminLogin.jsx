@@ -10,8 +10,8 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const ADMIN_USERNAME = 'fazrilukman';
-  const ADMIN_PASSWORD = 'Fajrilukman123_';
+  const ADMIN_USERNAME = 'sanproject';
+  const ADMIN_PASSWORD = 'sanproject';
 
   const handleLogin = (e) => {
     e.preventDefault();
