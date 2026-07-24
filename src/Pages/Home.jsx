@@ -239,7 +239,7 @@ const Home = () => {
       { icon: Github, link: "https://github.com/achsan490" },
       { icon: Linkedin, link: "https://www.linkedin.com/in/san-project-41a03029b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
       { icon: Instagram, link: "https://www.instagram.com/sannn.io" },
-      { icon: MessageCircle, link: "https://wa.me/6283839976681" }
+      { icon: MessageCircle, link: "https://wa.me/6283839976681?text=Halo%20Achsanul!%20Saya%20melihat%20portofolio%20Anda%20dan%20tertarik%20untuk%20berdiskusi." }
     ]
   });
 

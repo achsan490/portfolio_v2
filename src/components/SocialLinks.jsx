@@ -29,7 +29,7 @@ const SocialLinks = () => {
       displayName: "WhatsApp",
       subText: "+62 838-3997-6681",
       icon: MessageCircle,
-      url: "https://wa.me/6283839976681",
+      url: "https://wa.me/6283839976681?text=Halo%20Achsanul!%20Saya%20melihat%20portofolio%20Anda%20dan%20tertarik%20untuk%20berdiskusi.",
       color: "#25D366",
       gradient: "from-[#25D366] to-[#128C7E]",
     },
