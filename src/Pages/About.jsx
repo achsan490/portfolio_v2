@@ -1,6 +1,7 @@
 import React, { useEffect, memo, useMemo, useState } from "react"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
 import { supabase } from "../supabase"
+import { getStoredProfile } from "../utils/portfolioStorage"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -127,31 +128,41 @@ const AboutPage = () => {
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!supabase) return;
+      let data = null;
 
-      try {
-        const { data, error } = await supabase
-          .from('profile_settings')
-          .select('name, description, photo_url, cv_link')
-          .eq('id', 1)
-          .single();
-
-        if (error) throw error;
-
-        if (data) {
-          setProfileData({
-            name: data.name || "Fazri Lukman Nurrohman",
-            description: data.description || profileData.description,
-            photo_url: data.photo_url || "/Photo.jpg",
-            cv_link: data.cv_link || profileData.cv_link
-          });
+      if (supabase) {
+        try {
+          const { data: dbData } = await supabase
+            .from('profile_settings')
+            .select('name, description, photo_url, cv_link')
+            .eq('id', 1)
+            .maybeSingle();
+          if (dbData) data = dbData;
+        } catch (error) {
+          console.warn('Error fetching profile from Supabase:', error);
         }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+      }
+
+      if (!data) {
+        data = getStoredProfile();
+      }
+
+      if (data) {
+        setProfileData({
+          name: data.name || "M. Achsanul Khuluq Izzulchaq",
+          description: data.description || profileData.description,
+          photo_url: data.photo_url || "/Photo.jpg",
+          cv_link: data.cv_link || "/CV_Achsanul_Khuluq.jpg"
+        });
       }
     };
 
     fetchProfile();
+
+    window.addEventListener('portfolio_profile_updated', fetchProfile);
+    return () => {
+      window.removeEventListener('portfolio_profile_updated', fetchProfile);
+    };
   }, []);
 
   // Fetch data from Supabase

@@ -114,6 +114,8 @@ const AdminProfile = () => {
       }
 
       let photoUrl = '';
+
+      // Try Supabase first
       if (supabase) {
         try {
           const fileExt = file.name.split('.').pop();
@@ -133,17 +135,51 @@ const AdminProfile = () => {
         }
       }
 
+      // Fallback: compress + convert to Base64
       if (!photoUrl) {
-        photoUrl = await fileToBase64(file);
+        photoUrl = await new Promise((resolve) => {
+          const img = new Image();
+          const objectUrl = URL.createObjectURL(file);
+          img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 400;
+            let { width, height } = img;
+            if (width > MAX_SIZE || height > MAX_SIZE) {
+              if (width > height) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              } else {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          img.onerror = () => resolve('');
+          img.src = objectUrl;
+        });
+      }
+
+      if (!photoUrl) {
+        await Swal.fire('Error', 'Gagal memproses gambar', 'error');
+        return;
       }
       
-      setProfileData(prev => ({ ...prev, photo_url: photoUrl }));
+      // Update state AND immediately save to localStorage so About/Home refresh
+      const updatedProfile = { ...profileData, photo_url: photoUrl };
+      setProfileData(updatedProfile);
+      saveStoredProfile(updatedProfile);
       
       await Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
-        text: 'Gambar berhasil diupload',
-        timer: 2000,
+        text: 'Gambar berhasil diupload. Klik Simpan untuk menyimpan semua perubahan.',
+        timer: 3000,
         showConfirmButton: false
       });
     } catch (error) {
