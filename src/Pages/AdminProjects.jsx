@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import { supabase } from '../supabase';
+import { getStoredProjects, saveStoredProjects, fileToBase64 } from '../utils/portfolioStorage';
+
 import {
   Plus,
   Edit2,
@@ -46,22 +48,22 @@ const AdminProjects = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      if (!supabase) {
-        console.warn('Supabase not configured');
-        setLoading(false);
-        return;
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setProjects(data);
+          return;
+        }
       }
 
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('id', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
+      setProjects(getStoredProjects());
     } catch (error) {
       console.error('Error fetching projects:', error);
-      Swal.fire('Error', 'Failed to fetch projects', 'error');
+      setProjects(getStoredProjects());
     } finally {
       setLoading(false);
     }
@@ -111,13 +113,11 @@ const AdminProjects = () => {
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         Swal.fire('Error', 'Please select an image file', 'error');
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         Swal.fire('Error', 'Image size must be less than 5MB', 'error');
         return;
@@ -125,7 +125,6 @@ const AdminProjects = () => {
 
       setImageFile(file);
 
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -135,6 +134,10 @@ const AdminProjects = () => {
   };
 
   const uploadImage = async (file) => {
+    if (!supabase) {
+      return await fileToBase64(file);
+    }
+
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
@@ -146,15 +149,14 @@ const AdminProjects = () => {
 
       if (error) throw error;
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('profile-images')
         .getPublicUrl(filePath);
 
       return publicUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
+      console.warn('Supabase image upload failed, converting to Base64:', error);
+      return await fileToBase64(file);
     }
   };
 
@@ -163,13 +165,8 @@ const AdminProjects = () => {
     setSubmitting(true);
 
     try {
-      if (!supabase) {
-        throw new Error('Supabase not configured');
-      }
-
       let imageUrl = formData.Img;
 
-      // Upload image if file is selected
       if (imageFile) {
         setUploadingImage(true);
         imageUrl = await uploadImage(imageFile);
@@ -183,24 +180,57 @@ const AdminProjects = () => {
         TechStack: formData.TechStack
       };
 
-      if (editingProject) {
-        const { error } = await supabase
-          .from('projects')
-          .update(projectData)
-          .eq('id', editingProject.id);
+      if (supabase) {
+        try {
+          if (editingProject) {
+            const { error } = await supabase
+              .from('projects')
+              .update(projectData)
+              .eq('id', editingProject.id);
 
-        if (error) throw error;
+            if (!error) {
+              Swal.fire('Success!', 'Project updated successfully', 'success');
+              fetchProjects();
+              handleCloseModal();
+              return;
+            }
+          } else {
+            const { error } = await supabase
+              .from('projects')
+              .insert([projectData]);
+
+            if (!error) {
+              Swal.fire('Success!', 'Project created successfully', 'success');
+              fetchProjects();
+              handleCloseModal();
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Supabase save failed, falling back to LocalStorage:', err);
+        }
+      }
+
+      // LocalStorage fallback
+      const currentProjects = getStoredProjects();
+      let updated = [];
+
+      if (editingProject) {
+        updated = currentProjects.map((p) =>
+          p.id === editingProject.id ? { ...p, ...projectData } : p
+        );
         Swal.fire('Success!', 'Project updated successfully', 'success');
       } else {
-        const { error } = await supabase
-          .from('projects')
-          .insert([projectData]);
-
-        if (error) throw error;
+        const newProject = {
+          ...projectData,
+          id: Date.now()
+        };
+        updated = [newProject, ...currentProjects];
         Swal.fire('Success!', 'Project created successfully', 'success');
       }
 
-      fetchProjects();
+      saveStoredProjects(updated);
+      setProjects(updated);
       handleCloseModal();
     } catch (error) {
       console.error('Error saving project:', error);
@@ -226,19 +256,29 @@ const AdminProjects = () => {
 
     if (result.isConfirmed) {
       try {
-        if (!supabase) {
-          throw new Error('Supabase not configured');
+        if (supabase) {
+          try {
+            const { error } = await supabase
+              .from('projects')
+              .delete()
+              .eq('id', id);
+
+            if (!error) {
+              await Swal.fire('Deleted!', 'Project has been deleted.', 'success');
+              fetchProjects();
+              return;
+            }
+          } catch (e) {
+            console.warn('Supabase delete failed:', e);
+          }
         }
 
-        const { error } = await supabase
-          .from('projects')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
-
+        // LocalStorage delete
+        const currentProjects = getStoredProjects();
+        const updated = currentProjects.filter((p) => p.id !== id);
+        saveStoredProjects(updated);
+        setProjects(updated);
         await Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-        await fetchProjects();
       } catch (error) {
         console.error('Error deleting project:', error);
         Swal.fire('Error', 'Failed to delete project', 'error');

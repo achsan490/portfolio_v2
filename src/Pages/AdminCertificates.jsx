@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import { supabase } from '../supabase';
+import { getStoredCertificates, saveStoredCertificates, fileToBase64 } from '../utils/portfolioStorage';
+
 import {
   Plus,
   Trash2,
@@ -30,22 +32,22 @@ const AdminCertificates = () => {
   const fetchCertificates = async () => {
     try {
       setLoading(true);
-      if (!supabase) {
-        console.warn('Supabase not configured');
-        setLoading(false);
-        return;
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('certificates')
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setCertificates(data);
+          return;
+        }
       }
 
-      const { data, error } = await supabase
-        .from('certificates')
-        .select('*')
-        .order('id', { ascending: false });
-
-      if (error) throw error;
-      setCertificates(data || []);
+      setCertificates(getStoredCertificates());
     } catch (error) {
       console.error('Error fetching certificates:', error);
-      Swal.fire('Error', 'Failed to fetch certificates', 'error');
+      setCertificates(getStoredCertificates());
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,6 @@ const AdminCertificates = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validasi file
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       const maxSize = 5 * 1024 * 1024; // 5MB
 
@@ -87,50 +88,30 @@ const AdminCertificates = () => {
   };
 
   const uploadImageToSupabase = async (file) => {
+    if (!supabase) {
+      return await fileToBase64(file);
+    }
+
     try {
       setUploading(true);
-
-      if (!supabase) {
-        throw new Error('Supabase not configured');
-      }
-
-      // Buat nama file unik
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `certificates/${fileName}`;
 
-      // Cek apakah bucket ada, jika tidak tampilkan pesan yang lebih jelas
-      const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
-
-      if (bucketError) {
-        console.error('Error checking buckets:', bucketError);
-      }
-
-      const bucketExists = buckets?.some(bucket => bucket.name === 'certificates');
-
-      if (!bucketExists) {
-        throw new Error('Storage bucket "certificates" not found. Please create it in Supabase Dashboard:\n1. Go to Storage\n2. Create new bucket named "certificates"\n3. Make it public\n\nOr use URL method instead.');
-      }
-
-      // Upload ke Supabase Storage
       const { data, error } = await supabase.storage
-        .from('certificates')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+        .from('profile-images')
+        .upload(filePath, file);
 
       if (error) throw error;
 
-      // Dapatkan public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('certificates')
+        .from('profile-images')
         .getPublicUrl(filePath);
 
       return publicUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
+      console.warn('Supabase upload failed, fallback to Base64:', error);
+      return await fileToBase64(file);
     } finally {
       setUploading(false);
     }
@@ -141,67 +122,51 @@ const AdminCertificates = () => {
     setSubmitting(true);
 
     try {
-      if (!supabase) {
-        throw new Error('Supabase not configured');
-      }
-
       let finalImageUrl = imageUrl;
 
-      // Jika upload file
       if (uploadMethod === 'file') {
         if (!imageFile) {
           throw new Error('Please select an image file');
         }
-
-        try {
-          finalImageUrl = await uploadImageToSupabase(imageFile);
-        } catch (uploadError) {
-          // Jika upload gagal karena bucket tidak ada, beri instruksi
-          const errorMessage = uploadError.message || '';
-
-          if (errorMessage.includes('bucket') || errorMessage.includes('Bucket not found')) {
-            await Swal.fire({
-              icon: 'info',
-              title: 'Storage Bucket Not Found',
-              html: `
-                <div class="text-left">
-                  <p class="mb-3">The Supabase storage bucket needs to be created first.</p>
-                  <p class="font-bold mb-2">Steps to create bucket:</p>
-                  <ol class="list-decimal ml-5 space-y-1">
-                    <li>Go to your Supabase Dashboard</li>
-                    <li>Navigate to <strong>Storage</strong></li>
-                    <li>Click <strong>New Bucket</strong></li>
-                    <li>Name it: <code class="bg-gray-200 px-2 py-1 rounded">certificates</code></li>
-                    <li>Make it <strong>Public</strong></li>
-                    <li>Save and try again</li>
-                  </ol>
-                  <p class="mt-3 text-sm text-gray-600">Alternatively, you can use the URL method instead.</p>
-                </div>
-              `,
-              confirmButtonColor: '#3b82f6'
-            });
-            setSubmitting(false);
-            return;
-          }
-
-          throw uploadError;
-        }
+        finalImageUrl = await uploadImageToSupabase(imageFile);
       } else {
-        // Jika pakai URL
         if (!imageUrl.trim()) {
           throw new Error('Image URL is required');
         }
         finalImageUrl = imageUrl.trim();
       }
 
-      const { error } = await supabase
-        .from('certificates')
-        .insert([{ Img: finalImageUrl }]);
+      if (supabase) {
+        try {
+          const { error } = await supabase
+            .from('certificates')
+            .insert([{ Img: finalImageUrl }]);
 
-      if (error) throw error;
+          if (!error) {
+            Swal.fire('Success!', 'Certificate added successfully', 'success');
+            fetchCertificates();
+            handleCloseModal();
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase save failed:', e);
+        }
+      }
+
+      // LocalStorage fallback
+      const currentCerts = getStoredCertificates();
+      const newCert = {
+        id: Date.now(),
+        Img: finalImageUrl,
+        title: 'New Certificate',
+        issuer: 'Verified Issuer',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      };
+      const updated = [newCert, ...currentCerts];
+      saveStoredCertificates(updated);
+      setCertificates(updated);
 
       Swal.fire('Success!', 'Certificate added successfully', 'success');
-      fetchCertificates();
       handleCloseModal();
     } catch (error) {
       console.error('Error adding certificate:', error);
@@ -226,19 +191,29 @@ const AdminCertificates = () => {
 
     if (result.isConfirmed) {
       try {
-        if (!supabase) {
-          throw new Error('Supabase not configured');
+        if (supabase) {
+          try {
+            const { error } = await supabase
+              .from('certificates')
+              .delete()
+              .eq('id', id);
+
+            if (!error) {
+              await Swal.fire('Deleted!', 'Certificate has been deleted.', 'success');
+              fetchCertificates();
+              return;
+            }
+          } catch (e) {
+            console.warn('Supabase delete failed:', e);
+          }
         }
 
-        const { error } = await supabase
-          .from('certificates')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
-
+        // LocalStorage delete
+        const currentCerts = getStoredCertificates();
+        const updated = currentCerts.filter((c) => c.id !== id);
+        saveStoredCertificates(updated);
+        setCertificates(updated);
         await Swal.fire('Deleted!', 'Certificate has been deleted.', 'success');
-        await fetchCertificates();
       } catch (error) {
         console.error('Error deleting certificate:', error);
         Swal.fire('Error', 'Failed to delete certificate', 'error');

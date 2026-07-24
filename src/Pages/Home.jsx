@@ -3,6 +3,8 @@ import { Github, Linkedin, Mail, ExternalLink, Instagram, MessageCircle, Sparkle
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { supabase } from "../supabase"
+import { getStoredProfile } from "../utils/portfolioStorage"
+
 
 
 // Memoized Components
@@ -246,43 +248,54 @@ const Home = () => {
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!supabase) return;
-
-      try {
-        const { data, error } = await supabase
-          .from('profile_settings')
-          .select('*')
-          .single();
-
-        if (data) {
-          // Parse subtitle into array if it's a string
-          let subtitleArray = ["Web Developer", "UI/UX Design", "Mobile Developer", "Tech Enthusiast"];
-          if (data.subtitle) {
-            // If subtitle contains separator, split it
-            if (data.subtitle.includes('|')) {
-              subtitleArray = data.subtitle.split('|').map(s => s.trim());
-            } else {
-              subtitleArray = [data.subtitle, "Tech Enthusiast"];
-            }
-          }
-
-          setProfileData({
-            title: data.title || "Simple-Stack Developer",
-            subtitle: subtitleArray,
-            tech_stack: data.tech_stack || ["React", "JavaScript", "Node.js", "Python", "Tailwind", "Next.js", "MongoDB", "Express"],
-            social_links: [
-              { icon: Github, link: data.github_url || "https://github.com/achsan490" },
-              { icon: Linkedin, link: data.linkedin_url || "#" },
-              { icon: Instagram, link: data.instagram_url || "#" }
-            ]
-          });
+      let data = null;
+      if (supabase) {
+        try {
+          const { data: dbData } = await supabase
+            .from('profile_settings')
+            .select('*')
+            .maybeSingle();
+          if (dbData) data = dbData;
+        } catch (error) {
+          console.warn('Error fetching profile from Supabase:', error);
         }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+      }
+
+      if (!data) {
+        data = getStoredProfile();
+      }
+
+      if (data) {
+        let subtitleArray = ["Web Developer", "UI/UX Design", "Mobile Developer", "Tech Enthusiast"];
+        if (data.subtitle) {
+          if (typeof data.subtitle === 'string') {
+            subtitleArray = data.subtitle.includes('|')
+              ? data.subtitle.split('|').map(s => s.trim())
+              : [data.subtitle, "Tech Enthusiast"];
+          } else if (Array.isArray(data.subtitle)) {
+            subtitleArray = data.subtitle;
+          }
+        }
+
+        setProfileData({
+          title: data.title || "Simple-Stack Developer",
+          subtitle: subtitleArray,
+          tech_stack: data.tech_stack || ["React", "JavaScript", "Node.js", "Python", "Tailwind", "Next.js", "MongoDB", "Express"],
+          social_links: [
+            { icon: Github, link: data.github_url || "https://github.com/achsan490" },
+            { icon: Linkedin, link: data.linkedin_url || "#" },
+            { icon: Instagram, link: data.instagram_url || "#" }
+          ]
+        });
       }
     };
 
     fetchProfile();
+
+    window.addEventListener('portfolio_profile_updated', fetchProfile);
+    return () => {
+      window.removeEventListener('portfolio_profile_updated', fetchProfile);
+    };
   }, []);
 
   // Optimize AOS initialization

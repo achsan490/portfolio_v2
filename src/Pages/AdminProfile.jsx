@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User, Image, Link, FileText, Instagram, Linkedin, Github, Youtube, Music, Save, Loader, Upload } from 'lucide-react';
 import { supabase } from '../supabase';
+import { getStoredProfile, saveStoredProfile, fileToBase64 } from '../utils/portfolioStorage';
+
 import Swal from 'sweetalert2';
 import AdminLayout from '../components/AdminLayout';
 
@@ -32,45 +34,42 @@ const AdminProfile = () => {
   }, []);
 
   const fetchProfile = async () => {
-    if (!supabase) {
-      setLoading(false);
-      return;
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('profile_settings')
+          .select('*')
+          .single();
+
+        if (!error && data) {
+          setProfileData({
+            photo_url: data.photo_url || '',
+            title: data.title || 'Frontend Developer',
+            subtitle: data.subtitle || 'Web Developer|Design|Video & Photo Editing|UI/UX Design',
+            tech_stack: data.tech_stack || ['React', 'Javascript', 'Node.js', 'Tailwind'],
+            github_url: data.github_url || '',
+            linkedin_url: data.linkedin_url || '',
+            instagram_url: data.instagram_url || '',
+            name: data.name || 'M. Achsanul Khuluq Izzulchaq',
+            description: data.description || '',
+            cv_link: data.cv_link || '',
+            linkedin_connect: data.linkedin_connect || '',
+            instagram_connect: data.instagram_connect || '',
+            youtube_connect: data.youtube_connect || '',
+            github_connect: data.github_connect || '',
+            tiktok_connect: data.tiktok_connect || ''
+          });
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.warn('Error fetching profile from Supabase:', error);
+      }
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('profile_settings')
-        .select('*')
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (data) {
-        setProfileData({
-          photo_url: data.photo_url || '',
-          title: data.title || 'Frontend Developer',
-          subtitle: data.subtitle || 'Network & Telecom Student',
-          tech_stack: data.tech_stack || ['React', 'Javascript', 'Node.js', 'Tailwind'],
-          github_url: data.github_url || '',
-          linkedin_url: data.linkedin_url || '',
-          instagram_url: data.instagram_url || '',
-          name: data.name || 'Fazri Lukman Nurrohman',
-          description: data.description || '',
-          cv_link: data.cv_link || '',
-          linkedin_connect: data.linkedin_connect || '',
-          instagram_connect: data.instagram_connect || '',
-          youtube_connect: data.youtube_connect || '',
-          github_connect: data.github_connect || '',
-          tiktok_connect: data.tiktok_connect || ''
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setLoading(false);
-    }
+    const localProfile = getStoredProfile();
+    setProfileData(localProfile);
+    setLoading(false);
   };
 
   const handleInputChange = (field, value) => {
@@ -104,48 +103,41 @@ const AdminProfile = () => {
       
       if (!file) return;
       
-      // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         await Swal.fire('Error', 'Ukuran file maksimal 5MB', 'error');
         return;
       }
       
-      // Check file type
       if (!file.type.startsWith('image/')) {
         await Swal.fire('Error', 'File harus berupa gambar', 'error');
         return;
       }
-      
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = fileName;
-      
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('profile-images')
-        .upload(filePath, file);
-      
-      if (uploadError) {
-        // If bucket doesn't exist, show helpful message
-        if (uploadError.message.includes('not found')) {
-          await Swal.fire({
-            icon: 'error',
-            title: 'Storage Bucket Belum Dibuat',
-            html: 'Silakan buat bucket <strong>profile-images</strong> di Supabase Storage terlebih dahulu.<br><br>Lihat <strong>FILE_UPLOAD_TODO.md</strong> untuk panduan.',
-            confirmButtonText: 'OK'
-          });
-          return;
+
+      let photoUrl = '';
+      if (supabase) {
+        try {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('profile-images')
+            .upload(fileName, file);
+
+          if (!uploadError) {
+            const { data } = supabase.storage
+              .from('profile-images')
+              .getPublicUrl(fileName);
+            photoUrl = data.publicUrl;
+          }
+        } catch (e) {
+          console.warn('Supabase storage upload failed:', e);
         }
-        throw uploadError;
+      }
+
+      if (!photoUrl) {
+        photoUrl = await fileToBase64(file);
       }
       
-      // Get public URL
-      const { data } = supabase.storage
-        .from('profile-images')
-        .getPublicUrl(filePath);
-      
-      // Update photo_url in state
-      setProfileData(prev => ({ ...prev, photo_url: data.publicUrl }));
+      setProfileData(prev => ({ ...prev, photo_url: photoUrl }));
       
       await Swal.fire({
         icon: 'success',
@@ -163,22 +155,23 @@ const AdminProfile = () => {
   };
 
   const handleSave = async () => {
-    if (!supabase) {
-      Swal.fire('Error', 'Supabase tidak terhubung', 'error');
-      return;
-    }
-
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profile_settings')
-        .upsert([{
-          id: 1,
-          ...profileData,
-          updated_at: new Date().toISOString()
-        }]);
+      if (supabase) {
+        try {
+          await supabase
+            .from('profile_settings')
+            .upsert([{
+              id: 1,
+              ...profileData,
+              updated_at: new Date().toISOString()
+            }]);
+        } catch (e) {
+          console.warn('Supabase profile save failed:', e);
+        }
+      }
 
-      if (error) throw error;
+      saveStoredProfile(profileData);
 
       await Swal.fire({
         icon: 'success',
