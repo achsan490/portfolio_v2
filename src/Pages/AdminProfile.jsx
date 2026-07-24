@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Image, Link, FileText, Instagram, Linkedin, Github, Youtube, Music, Save, Loader, Upload } from 'lucide-react';
+import { User, Image as ImageIcon, Link, FileText, Instagram, Linkedin, Github, Youtube, Music, Save, Loader, Upload } from 'lucide-react';
 import { supabase } from '../supabase';
 import { getStoredProfile, saveStoredProfile, fileToBase64 } from '../utils/portfolioStorage';
 
@@ -138,7 +138,7 @@ const AdminProfile = () => {
       // Fallback: compress + convert to Base64
       if (!photoUrl) {
         photoUrl = await new Promise((resolve) => {
-          const img = new Image();
+          const img = new window.Image();
           const objectUrl = URL.createObjectURL(file);
           img.onload = () => {
             URL.revokeObjectURL(objectUrl);
@@ -256,7 +256,7 @@ const AdminProfile = () => {
           {/* Photo Section */}
           <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
             <div className="flex items-center gap-3 mb-4">
-              <Image className="w-5 h-5 text-blue-400" />
+              <ImageIcon className="w-5 h-5 text-blue-400" />
               <h2 className="text-xl font-semibold text-white">Foto Profil</h2>
             </div>
             <div className="space-y-4">
