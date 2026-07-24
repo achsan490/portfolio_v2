@@ -12,19 +12,19 @@ const AdminProfile = () => {
     photo_url: '',
     title: 'Frontend Developer',
     subtitle: 'Web Developer|Design|Video & Photo Editing|UI/UX Design',
-    tech_stack: ['React', 'Javascript', 'Node.js', 'Tailwind'],
-    github_url: 'https://github.com/Fazrilukman',
-    linkedin_url: 'https://www.linkedin.com/in/fazrilukman/',
-    instagram_url: 'https://www.instagram.com/fazrilukman_/?hl=id',
-    name: 'Fazri Lukman Nurrohman',
-    description: 'Seorang lulusan Teknik Jaringan Komputer dan Telekomunikasi yang memiliki ketertarikan besar dalam pengembangan Front-End. Saya berfokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.',
-    cv_link: 'https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo',
+    tech_stack: ['React', 'Javascript', 'Node.js', 'Tailwind', 'Next.js', 'PHP', 'MySQL'],
+    github_url: 'https://github.com/achsan490',
+    linkedin_url: 'https://www.linkedin.com/in/achsanul-khuluq-izzulchaq-41a03029b',
+    instagram_url: 'https://www.instagram.com/sannn.io',
+    name: 'M. Achsanul Khuluq Izzulchaq',
+    description: 'Saya adalah mahasiswa lulusan S1 Teknik Informatika yang siap memulai jenjang karir baru sebagai freshgraduate, sebelumnya saya pernah memiliki pengalaman dalam pengembangan aplikasi web, sistem informasi, serta proyek berbasis Next.js, PHP, dan MySQL.',
+    cv_link: '/CV_Achsanul_Khuluq.jpg',
     // Social links untuk Connect With Me
-    linkedin_connect: 'https://www.linkedin.com/in/fazrilukman/',
-    instagram_connect: 'https://www.instagram.com/fazrilukman_/?hl=id',
-    youtube_connect: 'https://www.youtube.com/@fazrilukman',
-    github_connect: 'https://github.com/Fazrilukman',
-    tiktok_connect: 'https://www.tiktok.com/@fazrilukman'
+    linkedin_connect: 'https://www.linkedin.com/in/achsanul-khuluq-izzulchaq-41a03029b',
+    instagram_connect: 'https://www.instagram.com/sannn.io',
+    youtube_connect: '',
+    github_connect: 'https://github.com/achsan490',
+    tiktok_connect: 'https://www.tiktok.com/@sann.io'
   });
 
   useEffect(() => {

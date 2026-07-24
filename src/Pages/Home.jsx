@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, memo } from "react"
-import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles, Code2, CloudDownload, Cpu, ShieldCheck, Server, Terminal } from "lucide-react"
+import { Github, Linkedin, Mail, ExternalLink, Instagram, MessageCircle, Sparkles, Code2, CloudDownload, Cpu, ShieldCheck, Server, Terminal } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { supabase } from "../supabase"
@@ -238,7 +238,8 @@ const Home = () => {
     social_links: [
       { icon: Github, link: "https://github.com/achsan490" },
       { icon: Linkedin, link: "https://www.linkedin.com/in/san-project-41a03029b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
-      { icon: Instagram, link: "https://www.instagram.com/san49410?igsh=eHR4YzIyNGZkM3lm" }
+      { icon: Instagram, link: "https://www.instagram.com/sannn.io" },
+      { icon: MessageCircle, link: "https://wa.me/6283839976681" }
     ]
   });
 

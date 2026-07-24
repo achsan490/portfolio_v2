@@ -104,6 +104,50 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 23,
+      Title: "KKN 27 Desa Klitih",
+      Description: "Website Profile Cinematic Interaktif KKN Tematik 2026 Kelompok 27 Desa Klitih, Kecamatan Plandaan, Kabupaten Jombang - Universitas KH. A. Wahab Hasbullah (UNWAHA). Platform ini menampilkan profil kelompok, dokumentasi kegiatan, galeri foto & video, serta informasi lengkap seputar pengabdian masyarakat.",
+      Link: "https://kkn27.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/kkn27-preview.png",
+      category: "Project",
+      TechStack: ["Next.js", "Tailwind", "React", "Vercel"],
+      Features: ["Company Profile Cinematic", "Informasi Kelompok KKN 27", "Dokumentasi Program Kerja", "Galeri Foto Interaktif", "Responsive & Modern UI"]
+    },
+    {
+      id: 22,
+      Title: "SIPAS Desa Klitih",
+      Description: "Sistem Informasi Pelayanan Administrasi Surat (SIPAS) Desa Klitih. Platform digital pelayanan publik yang memungkinkan warga mengajukan berbagai jenis surat keterangan desa secara online 24/7 secara cepat, transparan, dan mudah dipantau statusnya.",
+      Link: "https://surat-desa-klitih.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/sipas-preview.png",
+      category: "Project",
+      TechStack: ["Next.js", "Tailwind", "React", "Vercel"],
+      Features: ["Pengajuan Surat Online 24/7", "Cek Status Real-time via NIK", "12+ Jenis Surat Keterangan", "Verifikasi Admin Desa", "Unduh Dokumen PDF Resmi"]
+    },
+    {
+      id: 21,
+      Title: "PayCalc - Win95 Edition",
+      Description: "PayCalc v1.0 Windows 95 Desktop Edition adalah aplikasi kalkulator unik bertema retro Windows 95. Dilengkapi dengan interface nostalgia, efek suara khas (SFX), dan fitur simulasi paywall interaktif yang menghibur saat pengguna menekan tombol sama dengan (=).",
+      Link: "https://klktr.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/paycalc-win95-preview.png",
+      category: "Project",
+      TechStack: ["HTML", "CSS", "Javascript", "Vercel"],
+      Features: ["Windows 95 Retro Desktop UI", "Kalkulator Interaktif", "Simulasi Paywall Interaktif", "Retro Sound Effects (SFX)", "Nostalgic Desktop Experience"]
+    },
+    {
+      id: 20,
+      Title: "BEM FAI UNWAHA 2026",
+      Description: "Website resmi Badan Eksekutif Mahasiswa Fakultas Agama Islam Universitas KH. A. Wahab Hasbullah (UNWAHA) Jombang - Kabinet Perunggu 2026. Platform ini menjadi pusat informasi program kerja kemahasiswaan, artikel & kajian akademik, berita kampus, dan integrasi media sosial organisasi.",
+      Link: "https://bem-fai.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/bem-fai-preview.png",
+      category: "Project",
+      TechStack: ["Next.js", "Tailwind", "React", "TypeScript", "Vercel"],
+      Features: ["Portal Ormawa Kemahasiswaan", "Artikel & Kajian Akademik", "Informasi Program Kerja", "Integrasi Media Sosial", "Responsive Futuristic Design"]
+    },
+    {
       id: 19,
       Title: "Web Desa Pojok Klitih",
       Description: "Website Resmi Desa Pojok Klitih adalah platform digital pemerintah desa yang dibangun menggunakan Next.js untuk menyajikan informasi, layanan, dan potensi Desa Pojok Klitih, Kecamatan Plandaan, Kabupaten Jombang secara modern dan responsif. Platform ini menyediakan berita desa terkini, agenda kegiatan, galeri foto, profil desa, data statistik penduduk, layanan pengajuan surat secara online, serta informasi potensi dan UMKM lokal.",

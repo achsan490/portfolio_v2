@@ -118,8 +118,8 @@ const AboutPage = () => {
   const [totalProjects, setTotalProjects] = useState(0);
   const [totalCertificates, setTotalCertificates] = useState(0);
   const [profileData, setProfileData] = useState({
-    name: "Achsanul Khuluq Izzulchaq",
-    description: "Seorang Simple-stack developer yang passionate dalam membangun aplikasi web modern dan scalable. Saya fokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan. Dengan keahlian di frontend dan backend, saya siap menghadapi tantangan teknologi terkini.",
+    name: "M. Achsanul Khuluq Izzulchaq",
+    description: "Saya adalah mahasiswa lulusan S1 Teknik Informatika yang siap memulai jenjang karir baru sebagai freshgraduate, sebelumnya saya pernah memiliki pengalaman dalam pengembangan aplikasi web, sistem informasi, serta proyek berbasis Next.js, PHP, dan MySQL. Terlibat dalam pembuatan sistem loyalty reward, website desa, dan aplikasi CRUD akademik. Terbiasa bekerja dengan tampilan modern menggunakan Tailwind CSS serta mampu mengembangkan fitur kompleks seperti komentar, pagination, dan integrasi API. Siap berkontribusi dalam proyek IT dan pengembangan aplikasi.",
     photo_url: "/Photo.jpg",
     cv_link: "/CV_Achsanul_Khuluq.jpg"
   });

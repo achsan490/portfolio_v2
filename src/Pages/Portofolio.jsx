@@ -169,6 +169,38 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 23,
+      Title: "KKN 27 Desa Klitih",
+      Description: "Website Profile Cinematic Interaktif KKN Tematik 2026 Kelompok 27 Desa Klitih, Kecamatan Plandaan, Kabupaten Jombang - Universitas KH. A. Wahab Hasbullah (UNWAHA).",
+      Link: "https://kkn27.vercel.app/",
+      Img: "/kkn27-preview.png",
+      category: "Project"
+    },
+    {
+      id: 22,
+      Title: "SIPAS Desa Klitih",
+      Description: "Sistem Informasi Pelayanan Administrasi Surat (SIPAS) Desa Klitih. Layanan pengajuan surat keterangan desa secara online 24 jam yang cepat, transparan, dan terverifikasi.",
+      Link: "https://surat-desa-klitih.vercel.app/",
+      Img: "/sipas-preview.png",
+      category: "Project"
+    },
+    {
+      id: 21,
+      Title: "PayCalc - Win95 Edition",
+      Description: "PayCalc v1.0 Windows 95 Desktop Edition - Aplikasi kalkulator unik bertema retro Windows 95 dengan fitur paywall interaktif dan efek suara khas.",
+      Link: "https://klktr.vercel.app/",
+      Img: "/paycalc-win95-preview.png",
+      category: "Project"
+    },
+    {
+      id: 20,
+      Title: "BEM FAI UNWAHA 2026",
+      Description: "Website resmi Badan Eksekutif Mahasiswa Fakultas Agama Islam Universitas KH. A. Wahab Hasbullah (UNWAHA) Jombang - Kabinet Perunggu 2026.",
+      Link: "https://bem-fai.vercel.app/",
+      Img: "/bem-fai-preview.png",
+      category: "Project"
+    },
+    {
       id: 19,
       Title: "Web Desa Pojok Klitih",
       Description: "Website resmi Desa Pojok Klitih, Kecamatan Plandaan, Kabupaten Jombang. Dilengkapi fitur berita desa, agenda kegiatan, galeri, layanan surat online, data desa, dan informasi potensi desa.",
