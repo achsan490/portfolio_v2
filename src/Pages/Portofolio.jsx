@@ -169,6 +169,22 @@ export default function FullWidthTabs() {
   const defaultProjects = [
     // --- PROJECTS ---
     {
+      id: 25,
+      Title: "AI Idea Roulette",
+      Description: "AI Idea Roulette — Engineering Spec Generator & Project Brief Generator. Platform web interaktif untuk menghasilkan konsep proyek web, arsitektur tech stack, strategi monetisasi, dan viral growth thesis secara instan.",
+      Link: "https://idea-slot.vercel.app/",
+      Img: "/idea-slot-preview.png",
+      category: "Project"
+    },
+    {
+      id: 24,
+      Title: "UNWAHA Official Redesign",
+      Description: "Website Profile Kampus Modern Universitas KH. A. Wahab Hasbullah (UNWAHA) Tambakberas Jombang - Global Islamic University. Terintegrasi portal PMB 2026, SIAKAD, katalog prodi, beasiswa santri, dan dark mode.",
+      Link: "https://unwaha.com/",
+      Img: "/unwaha-preview.png",
+      category: "Project"
+    },
+    {
       id: 23,
       Title: "KKN 27 Desa Klitih",
       Description: "Website Profile Cinematic Interaktif KKN Tematik 2026 Kelompok 27 Desa Klitih, Kecamatan Plandaan, Kabupaten Jombang - Universitas KH. A. Wahab Hasbullah (UNWAHA).",
@@ -475,17 +491,37 @@ export default function FullWidthTabs() {
 
 
   useEffect(() => {
-    // Coba ambil dari localStorage dulu untuk laod lebih cepat
+    // Coba ambil dari localStorage dulu untuk load lebih cepat
     const cachedProjects = localStorage.getItem('projects');
     const cachedCertificates = localStorage.getItem('certificates');
     const cachedTechStack = localStorage.getItem('tech_stack');
 
     if (cachedProjects && cachedCertificates) {
-      setProjects(JSON.parse(cachedProjects));
-      setCertificates(JSON.parse(cachedCertificates));
+      try {
+        const parsedProjects = JSON.parse(cachedProjects);
+        if (Array.isArray(parsedProjects)) {
+          const existingIds = new Set(parsedProjects.map(p => p.id));
+          const missingDefaults = defaultProjects.filter(p => !existingIds.has(p.id));
+          const mergedProjects = missingDefaults.length > 0 ? [...missingDefaults, ...parsedProjects] : parsedProjects;
+          setProjects(mergedProjects);
+        } else {
+          setProjects(defaultProjects);
+        }
+        setCertificates(JSON.parse(cachedCertificates));
+      } catch (e) {
+        setProjects(defaultProjects);
+        setCertificates(defaultCertificates);
+      }
+    } else {
+      setProjects(defaultProjects);
+      setCertificates(defaultCertificates);
     }
     if (cachedTechStack) {
-      setTechStacks(JSON.parse(cachedTechStack));
+      try {
+        setTechStacks(JSON.parse(cachedTechStack));
+      } catch (e) {
+        setTechStacks(defaultTechStacks);
+      }
     }
 
     fetchData(); // Tetap panggil fetchData untuk sinkronisasi data terbaru

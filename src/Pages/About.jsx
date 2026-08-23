@@ -1,7 +1,7 @@
 import React, { useEffect, memo, useMemo, useState } from "react"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
 import { supabase } from "../supabase"
-import { getStoredProfile } from "../utils/portfolioStorage"
+import { getStoredProfile, getStoredProjects, getStoredCertificates } from "../utils/portfolioStorage"
 import Badge3D from "../components/Badge3D"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -128,9 +128,14 @@ const AboutPage = () => {
   // Fetch data from Supabase
   useEffect(() => {
     const fetchStats = async () => {
+      const storedProjects = getStoredProjects();
+      const storedCerts = getStoredCertificates();
+      const fallbackProjects = storedProjects.length || 17;
+      const fallbackCerts = storedCerts.length || 6;
+
       if (!supabase) {
-        setTotalProjects(15);
-        setTotalCertificates(6);
+        setTotalProjects(fallbackProjects);
+        setTotalCertificates(fallbackCerts);
         return;
       }
 
@@ -140,12 +145,12 @@ const AboutPage = () => {
           supabase.from('certificates').select('*', { count: 'exact', head: true })
         ]);
 
-        setTotalProjects(projectsRes.count || 15);
-        setTotalCertificates(certificatesRes.count || 6);
+        setTotalProjects(projectsRes.count || fallbackProjects);
+        setTotalCertificates(certificatesRes.count || fallbackCerts);
       } catch (error) {
         console.error('Error fetching stats:', error);
-        setTotalProjects(15);
-        setTotalCertificates(6);
+        setTotalProjects(fallbackProjects);
+        setTotalCertificates(fallbackCerts);
       }
     };
 

@@ -9,6 +9,22 @@ export const fileToBase64 = (file) => {
 
 export const DEFAULT_PROJECTS = [
     {
+        id: 25,
+        Title: "AI Idea Roulette",
+        Description: "AI Idea Roulette — Engineering Spec Generator & Project Brief Generator. Platform web interaktif untuk menghasilkan konsep proyek web, arsitektur tech stack, strategi monetisasi, dan viral growth thesis secara instan.",
+        Link: "https://idea-slot.vercel.app/",
+        Img: "/idea-slot-preview.png",
+        category: "Project"
+    },
+    {
+        id: 24,
+        Title: "UNWAHA Official Redesign",
+        Description: "Website Profile Kampus Modern Universitas KH. A. Wahab Hasbullah (UNWAHA) Tambakberas Jombang - Global Islamic University. Terintegrasi portal PMB 2026, SIAKAD, katalog prodi, beasiswa santri, dan dark mode.",
+        Link: "https://unwaha.com/",
+        Img: "/unwaha-preview.png",
+        category: "Project"
+    },
+    {
         id: 23,
         Title: "KKN 27 Desa Klitih",
         Description: "Website Profile Cinematic Interaktif KKN Tematik 2026 Kelompok 27 Desa Klitih, Kecamatan Plandaan, Kabupaten Jombang - Universitas KH. A. Wahab Hasbullah (UNWAHA).",
@@ -287,7 +303,19 @@ export const DEFAULT_PROFILE = {
 export const getStoredProjects = () => {
     try {
         const saved = localStorage.getItem("projects");
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                const existingIds = new Set(parsed.map(p => p.id));
+                const missingDefaults = DEFAULT_PROJECTS.filter(p => !existingIds.has(p.id));
+                if (missingDefaults.length > 0) {
+                    const merged = [...missingDefaults, ...parsed];
+                    localStorage.setItem("projects", JSON.stringify(merged));
+                    return merged;
+                }
+                return parsed;
+            }
+        }
         localStorage.setItem("projects", JSON.stringify(DEFAULT_PROJECTS));
         return DEFAULT_PROJECTS;
     } catch (e) {

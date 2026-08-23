@@ -104,6 +104,44 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 25,
+      Title: "AI Idea Roulette",
+      Description: "AI Idea Roulette adalah platform generator ide dan brief proyek engineering interaktif real-time yang dirancang khusus untuk para developer dan builder. Mengusung konsep 'Deterministic Randomness', platform ini mampu menghasilkan konsep aplikasi lengkap beserta arsitektur tech stack yang realistis, strategi monetisasi, target diferensiasi pasar, dan viral growth thesis dalam sekejap tanpa hambatan 'blank-canvas paralysis'. Dilengkapi fitur filter kategori (Dev Tools, Micro-SaaS, Productivity, Viral & Social, Games, Creative Tools) serta slot machine UI interaktif dengan efek suara.",
+      Link: "https://idea-slot.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/idea-slot-preview.png",
+      category: "Project",
+      TechStack: ["Next.js", "Tailwind", "React", "TypeScript", "Vercel"],
+      Features: [
+        "Deterministic Randomness Engine",
+        "Real-time Engineering Brief Generator",
+        "Realistic Tech Stack Architect",
+        "Monetization & Viral Growth Thesis",
+        "Category Filtering (Micro-SaaS, Dev Tools, Productivity, etc.)",
+        "Interactive Slot Reel Animations & Audio SFX",
+        "Deterministic Synthesis with History & Custom Briefs"
+      ]
+    },
+    {
+      id: 24,
+      Title: "UNWAHA Official Redesign",
+      Description: "UNWAHA Campus Web adalah rancangan modern website profile resmi Universitas KH. A. Wahab Hasbullah (UNWAHA) Tambakberas, Jombang. Menghadirkan identitas 'Global Islamic University' dengan integrasi nilai IMTAQ dan IPTEK. Platform ini mengusung antarmuka modern dengan dukungan Dark/Light mode, akses portal SIAKAD online, informasi pendaftaran mahasiswa baru (PMB 2026), katalog fakultas & program studi, program beasiswa (KIP-K, Tahfidz 30 Juz, Prestasi Santri), serta publikasi riset LPPM & e-library.",
+      Link: "https://unwaha.com/",
+      Github: "https://github.com/achsan490",
+      Img: "/unwaha-preview.png",
+      category: "Project",
+      TechStack: ["HTML", "CSS", "Javascript", "Lucide Icons", "Vercel"],
+      Features: [
+        "Modern & Responsive Campus Profile",
+        "Dark & Light Mode Theme Switcher",
+        "Portal Terintegrasi PMB 2026 & SIAKAD",
+        "Katalog Lengkap Fakultas & Program Studi",
+        "Informasi Beasiswa & Prestasi Santri",
+        "LPPM Riset & Digital Library Hub",
+        "Bilingual Ready Navigation (ID/EN)"
+      ]
+    },
+    {
       id: 23,
       Title: "KKN 27 Desa Klitih",
       Description: "Website Profile Cinematic Interaktif KKN Tematik 2026 Kelompok 27 Desa Klitih, Kecamatan Plandaan, Kabupaten Jombang - Universitas KH. A. Wahab Hasbullah (UNWAHA). Platform ini menampilkan profil kelompok, dokumentasi kegiatan, galeri foto & video, serta informasi lengkap seputar pengabdian masyarakat.",
