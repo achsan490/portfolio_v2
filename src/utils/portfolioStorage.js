@@ -9,6 +9,14 @@ export const fileToBase64 = (file) => {
 
 export const DEFAULT_PROJECTS = [
     {
+        id: 26,
+        Title: "TypeCraft Pro",
+        Description: "TypeCraft Pro — Minimalist Typing Test & Arcade Defense. Platform tes kecepatan mengetik profesional dengan analitik WPM presisi, sound effect keyboard mekanik, real-time feedback, dan mode arcade Word Defense.",
+        Link: "https://type-craft-pro.vercel.app/",
+        Img: "/typecraft-preview.png",
+        category: "Project"
+    },
+    {
         id: 25,
         Title: "AI Idea Roulette",
         Description: "AI Idea Roulette — Engineering Spec Generator & Project Brief Generator. Platform web interaktif untuk menghasilkan konsep proyek web, arsitektur tech stack, strategi monetisasi, dan viral growth thesis secara instan.",

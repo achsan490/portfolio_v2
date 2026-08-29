@@ -104,6 +104,25 @@ const ProjectDetails = () => {
   const allProjects = [
     // --- PROJECTS ---
     {
+      id: 26,
+      Title: "TypeCraft Pro",
+      Description: "TypeCraft Pro adalah platform tes kecepatan mengetik profesional dan game interaktif yang menggabungkan estetika minimalis dengan analitik presisi real-time. Dilengkapi fitur analitik WPM presisi, sound effect keyboard mekanik kustom (Typing, Spacebar, Mouse, Clicky Blue), multi-bahasa & mode coding, dark/cyberpunk themes, serta game mode 'Word Defense' untuk melatih refleks mengetik secara adiktif.",
+      Link: "https://type-craft-pro.vercel.app/",
+      Github: "https://github.com/achsan490",
+      Img: "/typecraft-preview.png",
+      category: "Project",
+      TechStack: ["HTML", "CSS", "JavaScript", "Vite", "Vercel"],
+      Features: [
+        "Minimalist Speed Test & Precision WPM Analytics",
+        "Arcade Game Mode (Word Defense)",
+        "Mechanical Keyboard Sound Effects (Custom SFX)",
+        "Multi-language & Code Typing Mode (ID / EN / Code)",
+        "Curated Themes (Carbon Noir, Tokyo Cyber, Matrix, Nordic)",
+        "Detailed Accuracy, Consistency & Keystroke Breakdown",
+        "Responsive & High-Performance UI"
+      ]
+    },
+    {
       id: 25,
       Title: "AI Idea Roulette",
       Description: "AI Idea Roulette adalah platform generator ide dan brief proyek engineering interaktif real-time yang dirancang khusus untuk para developer dan builder. Mengusung konsep 'Deterministic Randomness', platform ini mampu menghasilkan konsep aplikasi lengkap beserta arsitektur tech stack yang realistis, strategi monetisasi, target diferensiasi pasar, dan viral growth thesis dalam sekejap tanpa hambatan 'blank-canvas paralysis'. Dilengkapi fitur filter kategori (Dev Tools, Micro-SaaS, Productivity, Viral & Social, Games, Creative Tools) serta slot machine UI interaktif dengan efek suara.",
