@@ -4,137 +4,166 @@ import { useTexture, Environment } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import * as THREE from 'three'
 
-// ── Branded Lanyard Texture matching reference image ─────────────────────────
+// ── Ultra High-Definition Woven Lanyard Texture ─────────────────────────────
 function makeLanyardTexture() {
-  const W = 256, H = 1536
+  const W = 512, H = 2048
   const canvas = document.createElement('canvas')
   canvas.width = W; canvas.height = H
   const ctx = canvas.getContext('2d')
 
-  // ── Base: deep black ──
-  ctx.fillStyle = '#0a0a0c'
+  // ── Base: deep premium matte black strap ──
+  ctx.fillStyle = '#08090c'
   ctx.fillRect(0, 0, W, H)
 
-  // ── Subtle woven horizontal texture lines ──
-  for (let y = 0; y < H; y += 2) {
-    ctx.fillStyle = `rgba(255,255,255,${y % 4 === 0 ? 0.018 : 0.006})`
-    ctx.fillRect(0, y, W, 1)
-  }
+  // ── Realistic woven twill pattern ──
+  const patternCanvas = document.createElement('canvas')
+  patternCanvas.width = 16; patternCanvas.height = 16
+  const pctx = patternCanvas.getContext('2d')
+  pctx.fillStyle = '#08090c'
+  pctx.fillRect(0, 0, 16, 16)
+  pctx.strokeStyle = 'rgba(255, 255, 255, 0.035)'
+  pctx.lineWidth = 1.5
+  pctx.beginPath()
+  pctx.moveTo(0, 0); pctx.lineTo(16, 16)
+  pctx.moveTo(0, 8); pctx.lineTo(8, 16)
+  pctx.moveTo(8, 0); pctx.lineTo(16, 8)
+  pctx.stroke()
+  
+  const weavePattern = ctx.createPattern(patternCanvas, 'repeat')
+  ctx.fillStyle = weavePattern
+  ctx.fillRect(0, 0, W, H)
 
-  // ── Large diagonal blue shape (left side, like reference) ──
+  // ── Bold Electric Blue Graphic Geometry ──
+  // Main dynamic slash
   ctx.save()
   ctx.beginPath()
-  // Big parallelogram-ish blue slash, top-left to bottom
-  ctx.moveTo(-20, H * 0.15)
-  ctx.lineTo(W * 0.55, H * 0.05)
-  ctx.lineTo(W * 0.45, H * 0.45)
-  ctx.lineTo(-20, H * 0.52)
+  ctx.moveTo(-40, H * 0.12)
+  ctx.lineTo(W * 0.60, H * 0.04)
+  ctx.lineTo(W * 0.48, H * 0.46)
+  ctx.lineTo(-40, H * 0.54)
   ctx.closePath()
-  ctx.fillStyle = '#1a3ccc'
+  const grad1 = ctx.createLinearGradient(0, H * 0.04, W * 0.6, H * 0.46)
+  grad1.addColorStop(0, '#1d4ed8')
+  grad1.addColorStop(0.5, '#2563eb')
+  grad1.addColorStop(1, '#1e40af')
+  ctx.fillStyle = grad1
   ctx.fill()
 
-  // Slightly lighter blue inner highlight
+  // Crisp cyan-blue inner accent slash
   ctx.beginPath()
-  ctx.moveTo(-20, H * 0.17)
-  ctx.lineTo(W * 0.40, H * 0.07)
-  ctx.lineTo(W * 0.32, H * 0.38)
-  ctx.lineTo(-20, H * 0.44)
+  ctx.moveTo(-40, H * 0.15)
+  ctx.lineTo(W * 0.44, H * 0.07)
+  ctx.lineTo(W * 0.35, H * 0.38)
+  ctx.lineTo(-40, H * 0.45)
   ctx.closePath()
-  ctx.fillStyle = '#2255ee'
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.85)'
+  ctx.fill()
+
+  // Secondary slash lower section
+  ctx.beginPath()
+  ctx.moveTo(-40, H * 0.60)
+  ctx.lineTo(W * 0.55, H * 0.52)
+  ctx.lineTo(W * 0.45, H * 0.74)
+  ctx.lineTo(-40, H * 0.80)
+  ctx.closePath()
+  ctx.fillStyle = '#2563eb'
+  ctx.fill()
+
+  // Pure White Racing Accent Ribbon
+  ctx.beginPath()
+  ctx.moveTo(W * 0.32, H * 0.03)
+  ctx.lineTo(W * 0.54, H * 0.03)
+  ctx.lineTo(W * 0.40, H * 0.48)
+  ctx.lineTo(W * 0.18, H * 0.48)
+  ctx.closePath()
+  ctx.fillStyle = '#ffffff'
   ctx.fill()
   ctx.restore()
 
-  // ── Second smaller diagonal blue shape (bottom half) ──
+  // ── Realistic Edge Stitching (Stitch Lines on both borders) ──
   ctx.save()
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)'
+  ctx.lineWidth = 2.5
+  ctx.setLineDash([8, 6])
+  // Left stitch
   ctx.beginPath()
-  ctx.moveTo(-20, H * 0.62)
-  ctx.lineTo(W * 0.50, H * 0.54)
-  ctx.lineTo(W * 0.42, H * 0.72)
-  ctx.lineTo(-20, H * 0.78)
-  ctx.closePath()
-  ctx.fillStyle = '#1540d0'
-  ctx.fill()
+  ctx.moveTo(12, 0); ctx.lineTo(12, H)
+  ctx.stroke()
+  // Right stitch
+  ctx.beginPath()
+  ctx.moveTo(W - 12, 0); ctx.lineTo(W - 12, H)
+  ctx.stroke()
   ctx.restore()
 
-  // ── White diagonal stripe crossing the blue ──
+  // ── Ultra-crisp High-Res Typography on Strap ──
   ctx.save()
-  ctx.beginPath()
-  ctx.moveTo(W * 0.30, H * 0.04)
-  ctx.lineTo(W * 0.52, H * 0.04)
-  ctx.lineTo(W * 0.38, H * 0.47)
-  ctx.lineTo(W * 0.16, H * 0.47)
-  ctx.closePath()
-  ctx.fillStyle = 'rgba(255,255,255,0.88)'
-  ctx.fill()
-  ctx.restore()
-
-  // ── Edge detail lines (fabric stitch) ──
-  ctx.fillStyle = 'rgba(255,255,255,0.15)'
-  ctx.fillRect(0, 0, 3, H)
-  ctx.fillRect(W - 3, 0, 3, H)
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'
-  ctx.fillRect(3, 0, 2, H)
-  ctx.fillRect(W - 5, 0, 2, H)
-
-  // ── Large "sann.my.id" text — printed vertically on strap ──
-  ctx.save()
-  ctx.translate(W * 0.72, H * 0.35)
+  ctx.translate(W * 0.72, H * 0.34)
   ctx.rotate(-Math.PI / 2)
-  ctx.font = 'bold 38px Arial'
-  ctx.fillStyle = 'rgba(255,255,255,0.92)'
+  ctx.font = '900 68px "Inter", "Arial Black", sans-serif'
+  ctx.fillStyle = '#ffffff'
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'
+  ctx.shadowBlur = 8
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText('sann.my.id', 0, 0)
   ctx.restore()
 
-  // ── "BEYOND THE FUTURE" tagline below main text ──
+  // Tagline below main text
   ctx.save()
-  ctx.translate(W * 0.72, H * 0.47)
+  ctx.translate(W * 0.72, H * 0.48)
   ctx.rotate(-Math.PI / 2)
-  ctx.font = 'bold 13px Arial'
-  ctx.fillStyle = 'rgba(255,255,255,0.55)'
-  ctx.letterSpacing = '3px'
+  ctx.font = 'bold 22px "Inter", sans-serif'
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.letterSpacing = '6px'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText('BEYOND THE FUTURE', 0, 0)
   ctx.restore()
 
-  // ── San Project circular logo badge in center-bottom ──
-  const logoX = W * 0.62, logoY = H * 0.65
-  const logoR = 28
-  // Outer ring
+  // Circular Emblem Emblem on Lanyard
+  const emblemX = W * 0.62, emblemY = H * 0.67, emblemR = 52
+  ctx.save()
   ctx.beginPath()
-  ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(0,0,0,0.55)'
+  ctx.arc(emblemX, emblemY, emblemR, 0, Math.PI * 2)
+  ctx.fillStyle = '#0f172a'
   ctx.fill()
-  ctx.strokeStyle = 'rgba(255,255,255,0.35)'
+  ctx.lineWidth = 4
+  ctx.strokeStyle = '#3b82f6'
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(emblemX, emblemY, emblemR - 8, 0, Math.PI * 2)
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)'
   ctx.lineWidth = 2
   ctx.stroke()
-  // Inner text "SAN\nPROJECT"
-  ctx.fillStyle = 'rgba(255,255,255,0.90)'
-  ctx.font = 'bold 9px Arial'
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 18px "Inter", sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText('SAN', logoX, logoY - 6)
-  ctx.fillText('PROJECT', logoX, logoY + 6)
+  ctx.fillText('SAN', emblemX, emblemY - 10)
+  ctx.font = 'bold 13px "Inter", sans-serif'
+  ctx.fillStyle = '#60a5fa'
+  ctx.fillText('PROJECT', emblemX, emblemY + 12)
+  ctx.restore()
 
-  // ── Blue safety clasp band at top ──
-  ctx.fillStyle = '#1e40d4'
-  ctx.fillRect(0, 0, W, 60)
-  ctx.fillStyle = 'rgba(255,255,255,0.80)'
-  ctx.font = 'bold 12px Arial'
+  // Top Plastic Breakaway Buckle graphic
+  ctx.fillStyle = '#1e3a8a'
+  ctx.fillRect(0, 0, W, 100)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 22px sans-serif'
   ctx.textAlign = 'center'
-  ctx.fillText('sann.my.id', W / 2, 24)
-  ctx.font = '9px Arial'
-  ctx.fillStyle = 'rgba(255,255,255,0.50)'
-  ctx.fillText('SAN PROJECT', W / 2, 42)
+  ctx.fillText('sann.my.id', W / 2, 45)
+  ctx.font = '16px sans-serif'
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.fillText('OFFICIAL BADGE', W / 2, 75)
 
-  // Bottom connector sleeve (dark fabric fold)
-  ctx.fillStyle = '#181818'
-  ctx.fillRect(0, H - 80, W, 80)
-  ctx.fillStyle = 'rgba(255,255,255,0.10)'
-  ctx.fillRect(W * 0.3, H - 80, W * 0.4, 4)
-  ctx.fillRect(W * 0.3, H - 8, W * 0.4, 4)
+  // Bottom Metal Clip Sleeve
+  ctx.fillStyle = '#111827'
+  ctx.fillRect(0, H - 120, W, 120)
+  ctx.fillStyle = 'rgba(255,255,255,0.15)'
+  ctx.fillRect(W * 0.25, H - 120, W * 0.5, 8)
+  ctx.fillRect(W * 0.25, H - 20, W * 0.5, 8)
 
   const tex = new THREE.CanvasTexture(canvas)
   tex.wrapS = THREE.ClampToEdgeWrapping
@@ -143,8 +172,8 @@ function makeLanyardTexture() {
   return tex
 }
 
-// ── Ribbon Geometry (flat strap following physics curve) ──────────────────────
-function updateRibbon(geo, points, halfW = 0.18) {
+// ── Ribbon Geometry (Strap following physics spine) ──────────────────────────
+function updateRibbon(geo, points, halfW = 0.17) {
   const n = points.length
   const pos = new Float32Array(n * 2 * 3)
   const uvs = new Float32Array(n * 2 * 2)
@@ -172,7 +201,6 @@ function updateRibbon(geo, points, halfW = 0.18) {
     pos[b + 4] = p.y + perp.y * halfW
     pos[b + 5] = p.z + perp.z * halfW
 
-    // UV: u maps 0→1 across width, v maps 0→1 along full length (no repeat = single texture display)
     const u = i * 4
     uvs[u + 0] = 0; uvs[u + 1] = t
     uvs[u + 2] = 1; uvs[u + 3] = t
@@ -191,8 +219,8 @@ function updateRibbon(geo, points, halfW = 0.18) {
   if (geo.index) geo.index.needsUpdate = true
 }
 
-// ── Card Geometry with Punch Hole ─────────────────────────────────────────────
-function createCardWithHole(w = 1.55, h = 2.15, r = 0.10, holeR = 0.065, depth = 0.035) {
+// ── Realistic 3D PVC Card Geometry with Chamfer Bevel & Slot Hole ──────────
+function createCardWithSlotHole(w = 1.54, h = 2.18, r = 0.12, slotW = 0.22, slotH = 0.055, depth = 0.04) {
   const shape = new THREE.Shape()
   const x = -w / 2, y = -h / 2
   shape.moveTo(x + r, y)
@@ -205,16 +233,21 @@ function createCardWithHole(w = 1.55, h = 2.15, r = 0.10, holeR = 0.065, depth =
   shape.lineTo(x, y + r)
   shape.quadraticCurveTo(x, y, x + r, y)
 
-  // Punch hole near top center
-  const holePath = new THREE.Path()
+  // Top Punch Slot Hole (horizontal rounded pill shape)
   const holeY = h / 2 - 0.18
-  holePath.absarc(0, holeY, holeR, 0, Math.PI * 2, true)
+  const holePath = new THREE.Path()
+  const hw = slotW / 2, hr = slotH / 2
+  holePath.moveTo(-hw + hr, holeY - hr)
+  holePath.lineTo(hw - hr, holeY - hr)
+  holePath.absarc(hw - hr, holeY, hr, -Math.PI / 2, Math.PI / 2, false)
+  holePath.lineTo(-hw + hr, holeY + hr)
+  holePath.absarc(-hw + hr, holeY, hr, Math.PI / 2, (3 * Math.PI) / 2, false)
   shape.holes.push(holePath)
 
   const extrudeSettings = {
     depth,
     bevelEnabled: true,
-    bevelSegments: 3,
+    bevelSegments: 4,
     steps: 1,
     bevelSize: 0.008,
     bevelThickness: 0.006
@@ -225,8 +258,8 @@ function createCardWithHole(w = 1.55, h = 2.15, r = 0.10, holeR = 0.065, depth =
   return geo
 }
 
-// ── Rounded Plane Geometry for Card Face Textures ─────────────────────────────
-function createRoundedPlaneGeometry(w = 1.52, h = 2.12, r = 0.09) {
+// ── Rounded Plane Geometry for Card Face Texture Mapping ───────────────────
+function createRoundedPlaneGeometry(w = 1.52, h = 2.15, r = 0.11) {
   const shape = new THREE.Shape()
   const x = -w / 2, y = -h / 2
   shape.moveTo(x + r, y)
@@ -252,144 +285,131 @@ function createRoundedPlaneGeometry(w = 1.52, h = 2.12, r = 0.09) {
   return geo
 }
 
-// ── Lobster Claw Snap Hook (matches reference image silver hook at bottom) ─────
+// ── Realistic Chrome Lobster Claw Hook Assembly ────────────────────────────
 function LobsterClaw({ position = [0, 0, 0] }) {
-  const chromeMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#c8d0dc',
-    metalness: 1.0,
-    roughness: 0.05,
+  const polishedChrome = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#edf2f7',
+    metalness: 0.98,
+    roughness: 0.06,
     clearcoat: 1.0,
     clearcoatRoughness: 0.03,
+    reflectivity: 1.0,
   }), [])
 
-  const darkChromeMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#8a9aaa',
-    metalness: 0.98,
-    roughness: 0.12,
-    clearcoat: 0.8,
-    clearcoatRoughness: 0.06,
+  const brushedSteel = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#94a3b8',
+    metalness: 0.92,
+    roughness: 0.16,
+    clearcoat: 0.7,
+    clearcoatRoughness: 0.08,
   }), [])
 
   return (
     <group position={position}>
-
-      {/* ─── SWIVEL BARREL at top (where strap end attaches) ─── */}
-      {/* Main barrel cylinder — horizontal axis */}
+      {/* ── Top Swivel Barrel & Flat Strap Collar ── */}
       <mesh rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.045, 0.045, 0.22, 28]} />
-        <primitive object={chromeMat} />
+        <cylinderGeometry args={[0.046, 0.046, 0.24, 32]} />
+        <primitive object={polishedChrome} />
       </mesh>
-      {/* Barrel left cap */}
-      <mesh position={[-0.112, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.054, 0.054, 0.016, 24]} />
-        <primitive object={darkChromeMat} />
+      
+      {/* Swivel Collar Rings */}
+      <mesh position={[-0.12, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.018, 24]} />
+        <primitive object={brushedSteel} />
       </mesh>
-      {/* Barrel right cap */}
-      <mesh position={[0.112, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.054, 0.054, 0.016, 24]} />
-        <primitive object={darkChromeMat} />
+      <mesh position={[0.12, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.018, 24]} />
+        <primitive object={brushedSteel} />
       </mesh>
-      {/* Knurled groove rings */}
-      {[-0.055, 0, 0.055].map((x, i) => (
+
+      {/* Decorative knurled center bands */}
+      {[-0.06, 0.06].map((x, i) => (
         <mesh key={i} position={[x, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.048, 0.048, 0.008, 24]} />
-          <primitive object={darkChromeMat} />
+          <cylinderGeometry args={[0.049, 0.049, 0.01, 24]} />
+          <primitive object={brushedSteel} />
         </mesh>
       ))}
-      {/* Swivel pivot pin through barrel center */}
-      <mesh rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.014, 0.014, 0.30, 16]} />
-        <primitive object={chromeMat} />
-      </mesh>
 
-      {/* ─── CLAW BODY below swivel barrel ─── */}
-      <group position={[0, -0.25, 0]}>
-        {/* Top neck (connects barrel to claw body) */}
-        <mesh position={[0, 0.14, 0]}>
-          <cylinderGeometry args={[0.038, 0.038, 0.12, 24]} />
-          <primitive object={chromeMat} />
+      {/* ── Main Snap Hook Body ── */}
+      <group position={[0, -0.24, 0]}>
+        {/* Hook neck */}
+        <mesh position={[0, 0.13, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.12, 24]} />
+          <primitive object={polishedChrome} />
         </mesh>
 
-        {/* Claw oval body — right side straight wall */}
-        <mesh position={[0.095, 0.04, 0]}>
-          <cylinderGeometry args={[0.036, 0.036, 0.26, 22]} />
-          <primitive object={chromeMat} />
+        {/* Hook side spine */}
+        <mesh position={[-0.09, 0.03, 0]}>
+          <cylinderGeometry args={[0.036, 0.036, 0.24, 24]} />
+          <primitive object={polishedChrome} />
+        </mesh>
+        
+        {/* Hook right spine */}
+        <mesh position={[0.09, 0.03, 0]}>
+          <cylinderGeometry args={[0.036, 0.036, 0.24, 24]} />
+          <primitive object={polishedChrome} />
         </mesh>
 
-        {/* Claw oval body — left side straight wall */}
-        <mesh position={[-0.095, 0.04, 0]}>
-          <cylinderGeometry args={[0.036, 0.036, 0.26, 22]} />
-          <primitive object={chromeMat} />
-        </mesh>
-
-        {/* Bottom curved jaw (D-arc) */}
+        {/* Hook bottom curved loop */}
         <mesh position={[0, -0.09, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.095, 0.036, 22, 36, Math.PI]} />
-          <primitive object={chromeMat} />
+          <torusGeometry args={[0.09, 0.036, 24, 36, Math.PI]} />
+          <primitive object={polishedChrome} />
         </mesh>
 
-        {/* Top closing bar */}
-        <mesh position={[0, 0.18, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.036, 0.036, 0.22, 20]} />
-          <primitive object={chromeMat} />
+        {/* Top clasp bar */}
+        <mesh position={[0, 0.16, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.036, 0.036, 0.20, 20]} />
+          <primitive object={polishedChrome} />
         </mesh>
 
-        {/* ─── Spring gate (plunger tongue on right side) ─── */}
-        <group position={[0.095, 0.20, 0]}>
-          {/* Gate body */}
-          <mesh rotation={[0, 0, -0.22]}>
-            <cylinderGeometry args={[0.026, 0.026, 0.18, 18]} />
-            <primitive object={darkChromeMat} />
+        {/* Spring latch lever on side */}
+        <group position={[0.09, 0.18, 0]}>
+          <mesh rotation={[0, 0, -0.25]}>
+            <cylinderGeometry args={[0.026, 0.026, 0.16, 18]} />
+            <primitive object={brushedSteel} />
           </mesh>
-          {/* Gate pivot ball at top */}
-          <mesh position={[0.020, 0.095, 0]}>
+          <mesh position={[0.02, 0.08, 0]}>
             <sphereGeometry args={[0.026, 16, 16]} />
-            <primitive object={darkChromeMat} />
+            <primitive object={brushedSteel} />
           </mesh>
         </group>
-
-        {/* ─── Inner keyring bar (passes through grommet hole) ─── */}
-        <mesh position={[0, 0.18, 0.01]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.018, 0.018, 0.15, 14]} />
-          <primitive object={darkChromeMat} />
-        </mesh>
       </group>
     </group>
   )
 }
 
-// ── Chrome Grommet (eyelet around the punch hole) ─────────────────────────────
-function Grommet({ position = [0, 0, 0] }) {
+// ── Realistic Slotted Chrome Grommet ────────────────────────────────────────
+function SlottedGrommet({ position = [0, 0, 0] }) {
   const chromeMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#b0bec5',
-    metalness: 1.0,
-    roughness: 0.05,
+    color: '#e2e8f0',
+    metalness: 0.98,
+    roughness: 0.08,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.03,
+    clearcoatRoughness: 0.04,
   }), [])
 
   return (
     <group position={position}>
-      {/* Outer ring */}
+      {/* Front eyelet rim */}
+      <mesh position={[0, 0, 0.022]}>
+        <ringGeometry args={[0.04, 0.085, 32]} />
+        <primitive object={chromeMat} />
+      </mesh>
+      {/* Back eyelet rim */}
+      <mesh position={[0, 0, -0.022]} rotation={[0, Math.PI, 0]}>
+        <ringGeometry args={[0.04, 0.085, 32]} />
+        <primitive object={chromeMat} />
+      </mesh>
+      {/* Inner metal sleeve */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.065, 0.018, 16, 32]} />
-        <primitive object={chromeMat} />
-      </mesh>
-      {/* Inner lip front */}
-      <mesh position={[0, 0, 0.022]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.052, 0.01, 12, 28]} />
-        <primitive object={chromeMat} />
-      </mesh>
-      {/* Inner lip back */}
-      <mesh position={[0, 0, -0.022]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.052, 0.01, 12, 28]} />
+        <cylinderGeometry args={[0.042, 0.042, 0.048, 32, 1, true]} />
         <primitive object={chromeMat} />
       </mesh>
     </group>
   )
 }
 
-// ── Main Band + Card Component ────────────────────────────────────────────────
+// ── Main Band + Physics ID Card Component ──────────────────────────────────
 function Band() {
   const ribbonRef = useRef()
   const ribbonGeo = useMemo(() => {
@@ -423,7 +443,7 @@ function Band() {
   const [dragged, drag] = useState(false)
   const [hovered, hover] = useState(false)
 
-  // Load textures
+  // Load badge front & back high quality textures
   const [frontTex, backTex] = useTexture(['/badge-front.jpg', '/badge-back.jpg'])
 
   useMemo(() => {
@@ -438,52 +458,65 @@ function Band() {
     }
   }, [frontTex, backTex, gl])
 
-  // Card body with hole + face planes
-  const cardBodyGeo = useMemo(() => createCardWithHole(1.55, 2.15, 0.10, 0.065, 0.035), [])
-  const cardFaceGeo = useMemo(() => createRoundedPlaneGeometry(1.52, 2.12, 0.09), [])
+  // Card 3D Body & Face Geometry
+  const cardBodyGeo = useMemo(() => createCardWithSlotHole(1.54, 2.18, 0.12, 0.22, 0.055, 0.04), [])
+  const cardFaceGeo = useMemo(() => createRoundedPlaneGeometry(1.51, 2.15, 0.11), [])
 
-  // Materials
+  // ── Hyper-Realistic PVC Laminated Card Materials ──
+  // Card core bevel
   const bodyMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#111114',
-    roughness: 0.30,
-    metalness: 0.5,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.15,
+    color: '#0e1015',
+    roughness: 0.35,
+    metalness: 0.15,
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.1,
   }), [])
 
+  // Front PVC Laminated Face with Holographic Sheen
   const frontMat = useMemo(() => new THREE.MeshPhysicalMaterial({
     map: frontTex,
-    roughness: 0.10,
-    metalness: 0.01,
+    roughness: 0.12,
+    metalness: 0.02,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.04,
-    reflectivity: 0.9
+    clearcoatRoughness: 0.05,
+    ior: 1.52,
+    specularIntensity: 1.3,
+    specularColor: '#ffffff',
+    iridescence: 0.38,
+    iridescenceIOR: 1.35,
+    iridescenceThicknessRange: [120, 380],
+    reflectivity: 0.95
   }), [frontTex])
 
+  // Back PVC Face
   const backMat = useMemo(() => new THREE.MeshPhysicalMaterial({
     map: backTex,
-    roughness: 0.10,
-    metalness: 0.01,
+    roughness: 0.12,
+    metalness: 0.02,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.04,
-    reflectivity: 0.9
+    clearcoatRoughness: 0.05,
+    ior: 1.52,
+    specularIntensity: 1.3,
+    specularColor: '#ffffff',
+    iridescence: 0.38,
+    iridescenceIOR: 1.35,
+    iridescenceThicknessRange: [120, 380],
+    reflectivity: 0.95
   }), [backTex])
 
+  // Woven Ribbon Strap Material
   const strapMat = useMemo(() => new THREE.MeshStandardMaterial({
     map: lanyardTex,
     side: THREE.DoubleSide,
-    roughness: 0.75,
-    metalness: 0.0,
+    roughness: 0.72,
+    metalness: 0.05,
   }), [lanyardTex])
 
-  // Physics joints
-  // j3 connects to the swivel barrel top of the lobster claw → card joint anchor at top of card
+  // Rope joints setup for authentic cloth-like physics
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1])
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1])
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1])
-  // Anchor: j3 bottom [0,0,0] → card top at grommet level [0, 1.32, 0]
-  // The 1.32 matches: card half-height 1.075 + grommet offset 0.88 re-centered ≈ card top
-  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.32, 0]])
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.34, 0]])
 
   useEffect(() => {
     if (hovered) {
@@ -493,16 +526,35 @@ function Band() {
   }, [hovered, dragged])
 
   useFrame((state) => {
+    const time = state.clock.elapsedTime
+
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera)
       dir.copy(vec).sub(state.camera.position).normalize()
       vec.add(dir.multiplyScalar(state.camera.position.length()))
-        ;[card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp())
+      ;[card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp())
       card.current?.setNextKinematicTranslation({
         x: vec.x - dragged.x,
         y: vec.y - dragged.y,
         z: vec.z - dragged.z
       })
+    } else {
+      // Gentle ambient breathing sway when idle for realistic physical presence
+      if (card.current && !dragged) {
+        const swayX = Math.sin(time * 1.3) * 0.008
+        const swayY = Math.cos(time * 0.9) * 0.006
+        const mouseParallax = hovered ? state.pointer.x * 0.35 : 0
+
+        ang.copy(card.current.angvel())
+        rot.copy(card.current.rotation())
+        
+        // Restorative torque facing user + organic breathing
+        card.current.setAngvel({
+          x: ang.x * 0.95 + swayX,
+          y: ang.y - (rot.y - mouseParallax) * 0.28 + swayY,
+          z: ang.z * 0.95
+        })
+      }
     }
 
     if (fixed.current && card.current && j1.current && j2.current && j3.current) {
@@ -511,77 +563,72 @@ function Band() {
       curve.points[2].copy(j1.current.translation())
       curve.points[3].copy(fixed.current.translation())
 
-      updateRibbon(ribbonGeo, curve.getPoints(60), 0.18)
+      updateRibbon(ribbonGeo, curve.getPoints(60), 0.17)
       if (!ribbonReady) setRibbonReady(true)
-
-      ang.copy(card.current.angvel())
-      rot.copy(card.current.rotation())
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z })
     }
   })
 
   return (
     <>
       <group position={[0, 4, 0]}>
-        <RigidBody ref={fixed} angularDamping={2} linearDamping={2} type="fixed" />
+        <RigidBody ref={fixed} angularDamping={2.2} linearDamping={2.2} type="fixed" />
 
-        <RigidBody position={[0, -0.8, 0]} ref={j1} angularDamping={1.5} linearDamping={1.5}>
+        <RigidBody position={[0, -0.8, 0]} ref={j1} angularDamping={1.8} linearDamping={1.8}>
           <BallCollider args={[0.1]} />
         </RigidBody>
 
-        <RigidBody position={[0, -1.6, 0]} ref={j2} angularDamping={1.5} linearDamping={1.5}>
+        <RigidBody position={[0, -1.6, 0]} ref={j2} angularDamping={1.8} linearDamping={1.8}>
           <BallCollider args={[0.1]} />
         </RigidBody>
 
-        <RigidBody position={[0, -2.4, 0]} ref={j3} angularDamping={1.5} linearDamping={1.5}>
+        <RigidBody position={[0, -2.4, 0]} ref={j3} angularDamping={1.8} linearDamping={1.8}>
           <BallCollider args={[0.1]} />
         </RigidBody>
 
-        {/* ── ID Card Rigid Body ── */}
+        {/* ── 3D ID Card Rigid Body ── */}
         <RigidBody
           position={[0, -3.8, 0]}
           ref={card}
-          angularDamping={2}
-          linearDamping={2}
+          angularDamping={2.0}
+          linearDamping={2.0}
           type={dragged ? 'kinematicPosition' : 'dynamic'}
         >
-          <CuboidCollider args={[0.78, 1.08, 0.018]} />
+          <CuboidCollider args={[0.77, 1.09, 0.02]} />
 
           {/* Interactive Card Group */}
           <group
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
-            onPointerUp={(e) => (
-              e.stopPropagation(),
-              e.target.releasePointerCapture(e.pointerId),
+            onPointerUp={(e) => {
+              e.stopPropagation()
+              e.target.releasePointerCapture(e.pointerId)
               drag(false)
-            )}
-            onPointerDown={(e) => (
-              e.stopPropagation(),
-              e.target.setPointerCapture(e.pointerId),
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              e.target.setPointerCapture(e.pointerId)
               drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())))
-            )}
+            }}
           >
-            {/* Dark card body with punch hole */}
-            <mesh geometry={cardBodyGeo} material={bodyMat} />
+            {/* Beveled Card Solid Core */}
+            <mesh geometry={cardBodyGeo} material={bodyMat} castShadow receiveShadow />
 
-            {/* Front face texture */}
-            <mesh position={[0, 0, 0.024]} geometry={cardFaceGeo} material={frontMat} />
+            {/* Front PVC Holographic Face */}
+            <mesh position={[0, 0, 0.026]} geometry={cardFaceGeo} material={frontMat} castShadow />
 
-            {/* Back face texture */}
-            <mesh position={[0, 0, -0.024]} rotation={[0, Math.PI, 0]} geometry={cardFaceGeo} material={backMat} />
+            {/* Back PVC Face */}
+            <mesh position={[0, 0, -0.026]} rotation={[0, Math.PI, 0]} geometry={cardFaceGeo} material={backMat} />
 
-            {/* Chrome grommet around punch hole */}
-            <Grommet position={[0, 0.88, 0]} />
+            {/* Chrome Eyelet Grommet */}
+            <SlottedGrommet position={[0, 0.91, 0]} />
           </group>
 
-          {/* Lobster claw — swivel barrel sits at card top, claw body hangs below the strap end */}
-          {/* position Y: card half-height (1.075) + a bit above grommet = 1.08 */}
-          <LobsterClaw position={[0, 1.08, 0]} />
+          {/* Detailed Chrome Lobster Snap Hook */}
+          <LobsterClaw position={[0, 1.10, 0]} />
         </RigidBody>
       </group>
 
-      {/* Narrow branded lanyard strap */}
+      {/* Branded Woven Ribbon Strap */}
       <mesh
         ref={ribbonRef}
         geometry={ribbonGeo}
@@ -593,49 +640,68 @@ function Band() {
   )
 }
 
-// ── Loading Fallback ──────────────────────────────────────────────────────────
+// ── Loading Fallback ────────────────────────────────────────────────────────
 function Loader() {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full gap-3">
-      <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-      <span className="text-xs text-white/30 tracking-widest uppercase">Loading</span>
+      <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
+      <span className="text-xs text-white/40 tracking-widest uppercase">Rendering 3D Badge</span>
     </div>
   )
 }
 
-// ── Main Export ───────────────────────────────────────────────────────────────
+// ── Main Badge3D Container ──────────────────────────────────────────────────
 export default function Badge3D() {
   return (
-    <div className="relative w-full h-[520px] sm:h-[640px] flex items-center justify-center rounded-2xl overflow-hidden"
-      style={{ background: '#080808' }}
+    <div
+      className="relative w-full h-[520px] sm:h-[640px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border border-white/5"
+      style={{
+        background: 'radial-gradient(circle at center, #111827 0%, #08090d 60%, #030407 100%)'
+      }}
     >
-      {/* Very subtle vignette */}
-      <div className="absolute inset-0 pointer-events-none"
+      {/* Subtle glowing backdrop highlight behind badge */}
+      <div
+        className="absolute w-72 h-72 rounded-full pointer-events-none blur-[100px] opacity-30"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%)'
+          background: 'radial-gradient(circle, #3b82f6 0%, transparent 70%)',
+          top: '40%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
         }}
       />
 
-      {/* Drag hint */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex items-center gap-2 px-3 py-1.5 rounded-full text-[0.65rem] tracking-widest uppercase"
-        style={{ color: 'rgba(255,255,255,0.35)' }}
+      {/* Interactive Drag Hint */}
+      <div
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[0.68rem] tracking-widest uppercase backdrop-blur-md bg-white/[0.04] border border-white/10 text-slate-300 shadow-lg"
       >
-        <span>Drag the badge</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
+        <span>Drag & Interact with Badge</span>
       </div>
 
       <Suspense fallback={<Loader />}>
         <Canvas
           camera={{ position: [0, 0, 13], fov: 22 }}
           className="w-full h-full cursor-grab active:cursor-grabbing"
-          gl={{ alpha: true, antialias: true }}
+          gl={{ alpha: true, antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
         >
-          {/* Minimal clean lighting for crisp metal reflections */}
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[0, 10, 5]} intensity={3.5} color="#ffffff" />
-          <directionalLight position={[-6, 4, -4]} intensity={0.8} color="#aac4ff" />
-          <pointLight position={[4, 2, 6]} intensity={2.0} color="#ffffff" />
-          <pointLight position={[-4, -2, 4]} intensity={0.6} color="#8899cc" />
-          <Environment preset="warehouse" />
+          {/* Studio 3-Point Cinematic Lighting for Realistic Specular & Sheen */}
+          <ambientLight intensity={0.55} />
+          
+          {/* Main Key Light */}
+          <directionalLight position={[3, 8, 6]} intensity={2.8} color="#ffffff" />
+          
+          {/* Cool Rim / Edge Highlight */}
+          <directionalLight position={[-6, 4, -4]} intensity={1.4} color="#93c5fd" />
+          
+          {/* Soft Fill Light */}
+          <pointLight position={[-4, -2, 5]} intensity={1.2} color="#e2e8f0" />
+          <pointLight position={[4, 2, 4]} intensity={1.5} color="#60a5fa" />
+          
+          {/* Bottom subtle uplight */}
+          <pointLight position={[0, -5, 3]} intensity={0.6} color="#3b82f6" />
+
+          {/* HDR Studio Environment */}
+          <Environment preset="city" />
 
           <Physics debug={false} gravity={[0, -20, 0]} timeStep={1 / 60}>
             <Band />
@@ -643,11 +709,12 @@ export default function Badge3D() {
         </Canvas>
       </Suspense>
 
-      {/* Bottom label */}
+      {/* Bottom Subtitle Label */}
       <div className="absolute bottom-3 left-0 right-0 z-10 pointer-events-none text-center">
-        <span className="text-[0.6rem] uppercase tracking-[0.2em]"
-          style={{ color: 'rgba(255,255,255,0.18)' }}>
-          San Project • ID Badge
+        <span
+          className="text-[0.62rem] uppercase tracking-[0.22em] text-slate-500 font-medium"
+        >
+          San Project • 3D Interactive ID Badge
         </span>
       </div>
     </div>
