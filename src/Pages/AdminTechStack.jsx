@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import { supabase } from '../supabase';
+import { getStoredTechStack, saveStoredTechStack, fileToBase64 } from '../utils/portfolioStorage';
 import {
   Plus,
   Edit2,
@@ -40,23 +41,27 @@ const AdminTechStack = () => {
   const fetchTechStacks = async () => {
     try {
       setLoading(true);
-      if (!supabase) {
-        console.warn('Supabase not configured');
-        setLoading(false);
-        return;
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('tech_stack')
+            .select('*')
+            .order('sort_order', { ascending: true })
+            .order('id', { ascending: true });
+
+          if (!error && data && data.length > 0) {
+            setTechStacks(data);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase fetch failed, fallback to local tech stack:', e);
+        }
       }
 
-      const { data, error } = await supabase
-        .from('tech_stack')
-        .select('*')
-        .order('sort_order', { ascending: true })
-        .order('id', { ascending: true });
-
-      if (error) throw error;
-      setTechStacks(data || []);
+      setTechStacks(getStoredTechStack());
     } catch (error) {
       console.error('Error fetching tech stack:', error);
-      Swal.fire('Error', 'Failed to fetch tech stack', 'error');
+      setTechStacks(getStoredTechStack());
     } finally {
       setLoading(false);
     }
@@ -114,21 +119,30 @@ const AdminTechStack = () => {
   };
 
   const uploadImage = async (file) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-    const filePath = `${FOLDER_NAME}/${fileName}`;
+    if (!supabase) {
+      return await fileToBase64(file);
+    }
 
-    const { error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, file);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${FOLDER_NAME}/${fileName}`;
 
-    if (error) throw error;
+      const { error } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(filePath, file);
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(filePath);
+      if (error) throw error;
 
-    return publicUrl;
+      const { data: { publicUrl } } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (e) {
+      console.warn('Supabase storage upload failed, converting to Base64:', e);
+      return await fileToBase64(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -136,8 +150,6 @@ const AdminTechStack = () => {
     setSubmitting(true);
 
     try {
-      if (!supabase) throw new Error('Supabase not configured');
-
       if (!formData.name.trim()) {
         throw new Error('Tech stack name is required');
       }
@@ -163,24 +175,54 @@ const AdminTechStack = () => {
         sort_order: sortOrderNumber
       };
 
-      if (editingStack) {
-        const { error } = await supabase
-          .from('tech_stack')
-          .update(payload)
-          .eq('id', editingStack.id);
+      if (supabase) {
+        try {
+          if (editingStack) {
+            const { error } = await supabase
+              .from('tech_stack')
+              .update(payload)
+              .eq('id', editingStack.id);
 
-        if (error) throw error;
-        Swal.fire('Success!', 'Tech stack updated successfully', 'success');
-      } else {
-        const { error } = await supabase
-          .from('tech_stack')
-          .insert([payload]);
+            if (!error) {
+              Swal.fire('Success!', 'Tech stack updated successfully', 'success');
+              fetchTechStacks();
+              handleCloseModal();
+              return;
+            }
+          } else {
+            const { error } = await supabase
+              .from('tech_stack')
+              .insert([payload]);
 
-        if (error) throw error;
-        Swal.fire('Success!', 'Tech stack added successfully', 'success');
+            if (!error) {
+              Swal.fire('Success!', 'Tech stack added successfully', 'success');
+              fetchTechStacks();
+              handleCloseModal();
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Supabase save failed, falling back to LocalStorage:', e);
+        }
       }
 
-      fetchTechStacks();
+      // LocalStorage fallback
+      const currentStacks = getStoredTechStack();
+      let updated = [];
+
+      if (editingStack) {
+        updated = currentStacks.map(s => s.id === editingStack.id ? { ...s, ...payload } : s);
+      } else {
+        const newStack = {
+          id: Date.now(),
+          ...payload
+        };
+        updated = [...currentStacks, newStack];
+      }
+
+      saveStoredTechStack(updated);
+      setTechStacks(updated);
+      Swal.fire('Success!', `Tech stack ${editingStack ? 'updated' : 'added'} successfully`, 'success');
       handleCloseModal();
     } catch (error) {
       console.error('Error saving tech stack:', error);
@@ -206,17 +248,28 @@ const AdminTechStack = () => {
 
     if (result.isConfirmed) {
       try {
-        if (!supabase) throw new Error('Supabase not configured');
+        if (supabase) {
+          try {
+            const { error } = await supabase
+              .from('tech_stack')
+              .delete()
+              .eq('id', id);
 
-        const { error } = await supabase
-          .from('tech_stack')
-          .delete()
-          .eq('id', id);
+            if (!error) {
+              await Swal.fire('Deleted!', 'Tech stack has been deleted.', 'success');
+              await fetchTechStacks();
+              return;
+            }
+          } catch (e) {
+            console.warn('Supabase delete failed, falling back to LocalStorage:', e);
+          }
+        }
 
-        if (error) throw error;
-
+        const currentStacks = getStoredTechStack();
+        const updated = currentStacks.filter(s => s.id !== id);
+        saveStoredTechStack(updated);
+        setTechStacks(updated);
         await Swal.fire('Deleted!', 'Tech stack has been deleted.', 'success');
-        await fetchTechStacks();
       } catch (error) {
         console.error('Error deleting tech stack:', error);
         Swal.fire('Error', 'Failed to delete tech stack', 'error');

@@ -92,21 +92,21 @@ const Navbar = () => {
     return (
         <nav
             className={`fixed w-full top-0 z-50 transition-all duration-500 ${isOpen
-                ? "bg-[#030014]"
+                ? "bg-[#030305] border-b border-white/10"
                 : scrolled
-                    ? "bg-[#030014]/50 backdrop-blur-xl"
+                    ? "bg-[#030305]/80 backdrop-blur-2xl border-b border-white/[0.06] shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
                     : "bg-transparent"
                 }`}
         >
             <div className="mx-auto px-[5%] sm:px-[5%] lg:px-[10%]">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
+                <div className="flex items-center justify-between h-16 sm:h-20">
+                    {/* Logo & Brand */}
                     <div className="flex-shrink-0 flex items-center gap-3">
-                        <img src="/Logo.png" alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10 object-contain" />
+                        <img src="/Logo.png" alt="Logo" className="h-8 w-8 sm:h-9 sm:w-9 object-contain filter brightness-110" />
                         <a
                             href="#Home"
                             onClick={(e) => scrollToSection(e, "#Home")}
-                            className="text-base sm:text-xl font-bold bg-gradient-to-r from-[#3b82f6] to-[#1d4ed8] bg-clip-text text-transparent whitespace-nowrap"
+                            className="text-base sm:text-lg font-bold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent whitespace-nowrap"
                         >
                             San Project
                         </a>
@@ -114,30 +114,24 @@ const Navbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:block">
-                        <div className="ml-8 flex items-center space-x-8">
-                            {navItems.map((item) => (
-                                <a
-                                    key={item.label}
-                                    href={item.href}
-                                    onClick={(e) => scrollToSection(e, item.href)}
-                                    className="group relative px-1 py-2 text-sm font-medium"
-                                >
-                                    <span
-                                        className={`relative z-10 transition-colors duration-300 ${activeSection === item.href.substring(1)
-                                            ? "bg-gradient-to-r from-[#1d4ed8] to-[#3b82f6] bg-clip-text text-transparent font-semibold"
-                                            : "text-[#e2d3fd] group-hover:text-white"
-                                            }`}
+                        <div className="ml-8 flex items-center space-x-1 p-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] backdrop-blur-md">
+                            {navItems.map((item) => {
+                                const isActive = activeSection === item.href.substring(1);
+                                return (
+                                    <a
+                                        key={item.label}
+                                        href={item.href}
+                                        onClick={(e) => scrollToSection(e, item.href)}
+                                        className={`relative px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                                            isActive
+                                                ? "text-black bg-white shadow-md shadow-white/10 font-semibold"
+                                                : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                                        }`}
                                     >
                                         {item.label}
-                                    </span>
-                                    <span
-                                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#1d4ed8] to-[#3b82f6] transform origin-left transition-transform duration-300 ${activeSection === item.href.substring(1)
-                                            ? "scale-x-100"
-                                            : "scale-x-0 group-hover:scale-x-100"
-                                            }`}
-                                    />
-                                </a>
-                            ))}
+                                    </a>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -145,45 +139,43 @@ const Navbar = () => {
                     <div className="md:hidden">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className={`relative p-2 text-[#e2d3fd] hover:text-white transition-transform duration-300 ease-in-out transform ${isOpen ? "rotate-90 scale-125" : "rotate-0 scale-100"
-                                }`}
+                            className={`p-2 text-zinc-300 hover:text-white rounded-lg bg-white/[0.04] border border-white/10 transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
                         >
                             {isOpen ? (
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5" />
                             ) : (
-                                <Menu className="w-6 h-6" />
+                                <Menu className="w-5 h-5" />
                             )}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Dropdown */}
             <div
-                className={`md:hidden transition-all duration-300 ease-in-out ${isOpen
-                    ? "max-h-screen opacity-100"
-                    : "max-h-0 opacity-0 overflow-hidden"
+                className={`md:hidden transition-all duration-300 ease-in-out bg-[#030305]/95 backdrop-blur-2xl border-b border-white/10 ${isOpen
+                    ? "max-h-screen opacity-100 py-4 px-6"
+                    : "max-h-0 opacity-0 overflow-hidden py-0 px-6"
                     }`}
             >
-                <div className="px-4 py-6 space-y-4">
-                    {navItems.map((item, index) => (
-                        <a
-                            key={item.label}
-                            href={item.href}
-                            onClick={(e) => scrollToSection(e, item.href)}
-                            className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${activeSection === item.href.substring(1)
-                                ? "bg-gradient-to-r from-[#1d4ed8] to-[#3b82f6] bg-clip-text text-transparent font-semibold"
-                                : "text-[#e2d3fd] hover:text-white"
+                <div className="space-y-2">
+                    {navItems.map((item) => {
+                        const isActive = activeSection === item.href.substring(1);
+                        return (
+                            <a
+                                key={item.label}
+                                href={item.href}
+                                onClick={(e) => scrollToSection(e, item.href)}
+                                className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                                    isActive
+                                        ? "text-black bg-white font-semibold"
+                                        : "text-zinc-400 hover:text-white hover:bg-white/5"
                                 }`}
-                            style={{
-                                transitionDelay: `${index * 100}ms`,
-                                transform: isOpen ? "translateX(0)" : "translateX(50px)",
-                                opacity: isOpen ? 1 : 0,
-                            }}
-                        >
-                            {item.label}
-                        </a>
-                    ))}
+                            >
+                                {item.label}
+                            </a>
+                        );
+                    })}
                 </div>
             </div>
         </nav>

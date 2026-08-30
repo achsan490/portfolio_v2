@@ -12,7 +12,7 @@ const AdminProfile = () => {
   const [uploading, setUploading] = useState(false);
   const [profileData, setProfileData] = useState({
     photo_url: '',
-    title: 'Frontend Developer',
+    title: 'simple-stack developer',
     subtitle: 'Web Developer|Design|Video & Photo Editing|UI/UX Design',
     tech_stack: ['React', 'Javascript', 'Node.js', 'Tailwind', 'Next.js', 'PHP', 'MySQL'],
     github_url: 'https://github.com/achsan490',
@@ -44,7 +44,7 @@ const AdminProfile = () => {
         if (!error && data) {
           setProfileData({
             photo_url: data.photo_url || '',
-            title: data.title || 'Frontend Developer',
+            title: data.title || 'simple-stack developer',
             subtitle: data.subtitle || 'Web Developer|Design|Video & Photo Editing|UI/UX Design',
             tech_stack: data.tech_stack || ['React', 'Javascript', 'Node.js', 'Tailwind'],
             github_url: data.github_url || '',
@@ -341,7 +341,7 @@ const AdminProfile = () => {
                   type="text"
                   value={profileData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Frontend Developer"
+                  placeholder="simple-stack developer"
                   className="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                 />
               </div>

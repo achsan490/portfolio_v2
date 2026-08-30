@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-
 import { supabase } from "../supabase";
+import { getStoredProjects, getStoredCertificates, getStoredTechStack } from "../utils/portfolioStorage";
 
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
@@ -434,20 +434,16 @@ export default function FullWidthTabs() {
   ];
 
   const fetchData = useCallback(async () => {
-    // Check if Supabase is configured
+    // If Supabase is not configured, load from reliable localStorage storage
     if (!supabase) {
-      console.warn("⚠️ Supabase not configured. Using default data.");
-      setProjects(defaultProjects);
-      setCertificates(defaultCertificates);
-      setTechStacks(defaultTechStacks);
-      localStorage.setItem("projects", JSON.stringify(defaultProjects));
-      localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
-      localStorage.setItem("tech_stack", JSON.stringify(defaultTechStacks));
+      setProjects(getStoredProjects());
+      setCertificates(getStoredCertificates());
+      setTechStacks(getStoredTechStack());
+      setTechStackLoading(false);
       return;
     }
 
     try {
-      // Mengambil data dari Supabase secara paralel
       setTechStackLoading(true);
       const [projectsResponse, certificatesResponse, techStackResponse] = await Promise.all([
         supabase.from("projects").select("*").order('id', { ascending: true }),
@@ -455,84 +451,53 @@ export default function FullWidthTabs() {
         supabase.from("tech_stack").select("*").order('sort_order', { ascending: true }),
       ]);
 
-      // Error handling untuk setiap request
-      if (projectsResponse.error) {
-        console.error('Projects fetch error:', projectsResponse.error);
-        throw projectsResponse.error;
-      }
-      if (certificatesResponse.error) {
-        console.error('Certificates fetch error:', certificatesResponse.error);
-        throw certificatesResponse.error;
-      }
-      if (techStackResponse.error) {
-        console.error('Tech stack fetch error:', techStackResponse.error);
-      }
-
-      // Supabase mengembalikan data dalam properti 'data'
       const projectData = projectsResponse.data || [];
       const certificateData = certificatesResponse.data || [];
       const techStackData = techStackResponse?.data || [];
 
-      // Jika data kosong (table kosong), gunakan default
-      setProjects(projectData.length > 0 ? projectData : defaultProjects);
-      setCertificates(certificateData.length > 0 ? certificateData : defaultCertificates);
-
-      if (!techStackResponse.error) {
-        const normalizedTechStack = normalizeTechStack(techStackData);
-        setTechStacks(normalizedTechStack.length > 0 ? normalizedTechStack : defaultTechStacks);
-        localStorage.setItem("tech_stack", JSON.stringify(normalizedTechStack));
+      if (!projectsResponse.error && projectData.length > 0) {
+        setProjects(projectData);
+        localStorage.setItem("projects", JSON.stringify(projectData));
+      } else {
+        setProjects(getStoredProjects());
       }
 
-      // Store in localStorage (fungsionalitas ini tetap dipertahankan)
-      if (projectData.length > 0) localStorage.setItem("projects", JSON.stringify(projectData));
-      if (certificateData.length > 0) localStorage.setItem("certificates", JSON.stringify(certificateData));
+      if (!certificatesResponse.error && certificateData.length > 0) {
+        setCertificates(certificateData);
+        localStorage.setItem("certificates", JSON.stringify(certificateData));
+      } else {
+        setCertificates(getStoredCertificates());
+      }
 
+      if (!techStackResponse.error && techStackData.length > 0) {
+        const normalizedTechStack = normalizeTechStack(techStackData);
+        setTechStacks(normalizedTechStack);
+        localStorage.setItem("tech_stack", JSON.stringify(normalizedTechStack));
+      } else {
+        setTechStacks(getStoredTechStack());
+      }
     } catch (error) {
-      console.error("Error fetching data from Supabase:", error.message);
-      // Fallback to default if error matches "null" or connection issues
-      setProjects(prev => prev.length > 0 ? prev : defaultProjects);
+      console.warn("Supabase fetch failed, fallback to localStorage:", error.message);
+      setProjects(getStoredProjects());
+      setCertificates(getStoredCertificates());
+      setTechStacks(getStoredTechStack());
     } finally {
       setTechStackLoading(false);
     }
   }, []);
 
-
-
   useEffect(() => {
-    // Coba ambil dari localStorage dulu untuk load lebih cepat
-    const cachedProjects = localStorage.getItem('projects');
-    const cachedCertificates = localStorage.getItem('certificates');
-    const cachedTechStack = localStorage.getItem('tech_stack');
+    fetchData();
 
-    if (cachedProjects && cachedCertificates) {
-      try {
-        const parsedProjects = JSON.parse(cachedProjects);
-        if (Array.isArray(parsedProjects)) {
-          const existingIds = new Set(parsedProjects.map(p => p.id));
-          const missingDefaults = defaultProjects.filter(p => !existingIds.has(p.id));
-          const mergedProjects = missingDefaults.length > 0 ? [...missingDefaults, ...parsedProjects] : parsedProjects;
-          setProjects(mergedProjects);
-        } else {
-          setProjects(defaultProjects);
-        }
-        setCertificates(JSON.parse(cachedCertificates));
-      } catch (e) {
-        setProjects(defaultProjects);
-        setCertificates(defaultCertificates);
-      }
-    } else {
-      setProjects(defaultProjects);
-      setCertificates(defaultCertificates);
-    }
-    if (cachedTechStack) {
-      try {
-        setTechStacks(JSON.parse(cachedTechStack));
-      } catch (e) {
-        setTechStacks(defaultTechStacks);
-      }
-    }
+    window.addEventListener('portfolio_projects_updated', fetchData);
+    window.addEventListener('portfolio_certificates_updated', fetchData);
+    window.addEventListener('portfolio_techstack_updated', fetchData);
 
-    fetchData(); // Tetap panggil fetchData untuk sinkronisasi data terbaru
+    return () => {
+      window.removeEventListener('portfolio_projects_updated', fetchData);
+      window.removeEventListener('portfolio_certificates_updated', fetchData);
+      window.removeEventListener('portfolio_techstack_updated', fetchData);
+    };
   }, [fetchData]);
 
   const handleChange = (event, newValue) => {
@@ -556,36 +521,34 @@ export default function FullWidthTabs() {
   const displayedProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
 
-  // Sisa dari komponen (return statement) tidak ada perubahan
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] overflow-hidden" id="Portofolio">
-      {/* Header section - unchanged */}
+      {/* Header section */}
       <div className="text-center pb-10" data-aos="fade-up" data-aos-duration="1000">
         <h2 className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#3b82f6]">
           <span style={{
-            color: '#2563eb',
-            backgroundImage: 'linear-gradient(45deg, #2563eb 10%, #3b82f6 93%)',
+            background: 'linear-gradient(135deg, #ffffff 0%, #d4d4d8 50%, #a1a1aa 100%)',
             WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            WebkitTextFillColor: 'transparent',
+            fontFamily: "'Space Grotesk', 'Poppins', sans-serif"
           }}>
             Portfolio Showcase
           </span>
         </h2>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2">
+        <p className="text-zinc-400 max-w-2xl mx-auto text-sm md:text-base mt-2 font-light">
           Explore my journey through projects, certifications, and technical expertise.
           Each section represents a milestone in my continuous learning path.
         </p>
       </div>
 
       <Box sx={{ width: "100%" }}>
-        {/* AppBar and Tabs section - unchanged */}
+        {/* AppBar and Tabs section */}
         <AppBar
           position="static"
           elevation={0}
           sx={{
             bgcolor: "transparent",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "20px",
             position: "relative",
             overflow: "hidden",
@@ -596,46 +559,43 @@ export default function FullWidthTabs() {
               left: 0,
               right: 0,
               bottom: 0,
-              background: "linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(37, 99, 235, 0.03) 100%)",
-              backdropFilter: "blur(10px)",
+              background: "rgba(255, 255, 255, 0.02)",
+              backdropFilter: "blur(12px)",
               zIndex: 0,
             },
           }}
           className="md:px-4"
         >
-          {/* Tabs remain unchanged */}
           <Tabs
             value={value}
             onChange={handleChange}
-            textColor="secondary"
+            textColor="inherit"
             indicatorColor="secondary"
             variant="fullWidth"
             sx={{
-              minHeight: "70px",
+              minHeight: "64px",
               "& .MuiTab-root": {
-                fontSize: { xs: "0.9rem", md: "1rem" },
-                fontWeight: "600",
-                color: "#94a3b8",
+                fontSize: { xs: "0.85rem", md: "0.95rem" },
+                fontWeight: "500",
+                color: "#a1a1aa",
                 textTransform: "none",
-                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                padding: "20px 0",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                padding: "16px 0",
                 zIndex: 1,
-                margin: "8px",
-                borderRadius: "12px",
+                margin: "6px",
+                borderRadius: "14px",
                 "&:hover": {
                   color: "#ffffff",
-                  backgroundColor: "rgba(59, 130, 246, 0.1)",
-                  transform: "translateY(-2px)",
-                  "& .lucide": {
-                    transform: "scale(1.1) rotate(5deg)",
-                  },
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  transform: "translateY(-1px)",
                 },
                 "&.Mui-selected": {
-                  color: "#fff",
-                  background: "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))",
-                  boxShadow: "0 4px 15px -3px rgba(59, 130, 246, 0.2)",
+                  color: "#000000",
+                  backgroundColor: "#ffffff",
+                  fontWeight: "600",
+                  boxShadow: "0 4px 20px rgba(255, 255, 255, 0.15)",
                   "& .lucide": {
-                    color: "#a78bfa",
+                    color: "#000000",
                   },
                 },
               },
@@ -643,22 +603,22 @@ export default function FullWidthTabs() {
                 height: 0,
               },
               "& .MuiTabs-flexContainer": {
-                gap: "8px",
+                gap: "6px",
               },
             }}
           >
             <Tab
-              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Code className="mb-1.5 w-4 h-4 transition-all duration-300" />}
               label="Projects"
               {...a11yProps(0)}
             />
             <Tab
-              icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Award className="mb-1.5 w-4 h-4 transition-all duration-300" />}
               label="Certificates"
               {...a11yProps(1)}
             />
             <Tab
-              icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Boxes className="mb-1.5 w-4 h-4 transition-all duration-300" />}
               label="Tech Stack"
               {...a11yProps(2)}
             />
@@ -673,19 +633,19 @@ export default function FullWidthTabs() {
           <TabPanel value={value} index={0} dir={theme.direction}>
             {/* Category Filter */}
             <div className="mb-8 flex justify-center overflow-x-auto px-4 sm:px-0" data-aos="fade-down" data-aos-duration="800">
-              <div className="inline-flex bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-1.5 sm:p-2 gap-1 sm:gap-2 min-w-max">
+              <div className="inline-flex bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 gap-1.5 min-w-max">
                 {['Project', 'Design', 'Editing'].map((category) => (
                   <button
                     key={category}
                     onClick={() => {
                       setSelectedCategory(category);
-                      setShowAllProjects(false); // Reset show all saat ganti kategori
+                      setShowAllProjects(false);
                     }}
                     className={`
-                      px-4 sm:px-8 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base transition-all duration-400 whitespace-nowrap
+                      px-5 sm:px-7 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all duration-300 whitespace-nowrap
                       ${selectedCategory === category
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-white text-black shadow-md shadow-white/10 font-semibold'
+                        : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
                       }
                     `}
                   >

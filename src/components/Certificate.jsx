@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Modal, IconButton, Box, Fade, Backdrop, Zoom, Typography } from "@mui/material"
+import { Modal, IconButton, Box, Backdrop, Typography } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 import FullscreenIcon from "@mui/icons-material/Fullscreen"
 
@@ -18,16 +18,18 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 		<Box component="div" sx={{ width: "100%" }}>
 			{/* Thumbnail Container */}
 			<Box
-				className=""
 				sx={{
 					position: "relative",
 					overflow: "hidden",
-					borderRadius: 2,
-					boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+					borderRadius: "16px",
+					border: "1px solid rgba(255, 255, 255, 0.08)",
+					bgcolor: "#08080c",
+					boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
 					transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 					"&:hover": {
-						transform: "translateY(-5px)",
-						boxShadow: "0 12px 24px rgba(0,0,0,0.2)",
+						transform: "translateY(-4px)",
+						borderColor: "rgba(255, 255, 255, 0.2)",
+						boxShadow: "0 16px 36px rgba(0,0,0,0.8)",
 						"& .overlay": {
 							opacity: 1,
 						},
@@ -36,25 +38,12 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 							opacity: 1,
 						},
 						"& .certificate-image": {
-							filter: "contrast(1.05) brightness(1) saturate(1.1)",
+							transform: "scale(1.03)",
 						},
 					},
 				}}>
-				{/* Certificate Image with Initial Filter */}
-				<Box
-					sx={{
-						position: "relative",
-						"&::before": {
-							content: '""',
-							position: "absolute",
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							backgroundColor: "rgba(0, 0, 0, 0.1)",
-							zIndex: 1,
-						},
-					}}>
+				{/* Certificate Image */}
+				<Box sx={{ position: "relative", overflow: "hidden" }}>
 					<img
 						className="certificate-image"
 						src={ImgSertif}
@@ -64,8 +53,8 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 							height: "auto",
 							display: "block",
 							objectFit: "cover",
-							filter: "contrast(1.10) brightness(0.9) saturate(1.1)",
-							transition: "filter 0.3s ease",
+							filter: "contrast(1.05) brightness(0.95)",
+							transition: "all 0.5s ease",
 						}}
 						onClick={handleOpen}
 					/>
@@ -81,6 +70,8 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 						right: 0,
 						bottom: 0,
 						opacity: 0,
+						backgroundColor: "rgba(0, 0, 0, 0.65)",
+						backdropFilter: "blur(3px)",
 						transition: "all 0.3s ease",
 						cursor: "pointer",
 						zIndex: 2,
@@ -95,23 +86,25 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 							left: "50%",
 							transform: "translate(-50%, -60%)",
 							opacity: 0,
-							transition: "all 0.4s ease",
+							transition: "all 0.3s ease",
 							textAlign: "center",
 							width: "100%",
 							color: "white",
 						}}>
 						<FullscreenIcon
 							sx={{
-								fontSize: 40,
-								mb: 1,
-								filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+								fontSize: 36,
+								mb: 0.5,
+								filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
 							}}
 						/>
 						<Typography
-							variant="h6"
+							variant="subtitle2"
 							sx={{
 								fontWeight: 600,
-								textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+								letterSpacing: "0.05em",
+								textTransform: "uppercase",
+								fontSize: "0.75rem",
 							}}>
 							View Certificate
 						</Typography>
@@ -121,13 +114,14 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 
 			{/* Certificate Details */}
 			{(title || issuer || date || description) && (
-				<Box sx={{ mt: 2 }}>
+				<Box sx={{ mt: 2, px: 0.5 }}>
 					{title && (
 						<Typography
 							variant="h6"
 							sx={{
 								fontWeight: 600,
-								color: "white",
+								fontSize: "1.05rem",
+								color: "#f4f4f5",
 								mb: 0.5,
 							}}>
 							{title}
@@ -137,36 +131,39 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 						<Typography
 							variant="body2"
 							sx={{
-								color: "#94a3b8",
+								color: "#a1a1aa",
+								fontSize: "0.82rem",
 								mb: 0.5,
 								display: "flex",
 								alignItems: "center",
-								gap: 0.5,
+								gap: 0.8,
 							}}>
-							<span style={{ color: "#3b82f6" }}>📜</span> {issuer}
+							<span style={{ color: "#d4d4d8" }}>📜</span> {issuer}
 						</Typography>
 					)}
 					{date && (
 						<Typography
 							variant="body2"
 							sx={{
-								color: "#94a3b8",
+								color: "#71717a",
+								fontSize: "0.78rem",
 								mb: 1,
 								display: "flex",
 								alignItems: "center",
-								gap: 0.5,
+								gap: 0.8,
 							}}>
-							<span style={{ color: "#3b82f6" }}>📅</span> {date}
+							<span style={{ color: "#a1a1aa" }}>📅</span> {date}
 						</Typography>
 					)}
 					{description && (
 						<Typography
 							variant="body2"
 							sx={{
-								color: "#cbd5e1",
-								fontSize: "0.875rem",
-								lineHeight: 1.6,
-								mt: 1,
+								color: "#a1a1aa",
+								fontSize: "0.82rem",
+								lineHeight: 1.5,
+								mt: 0.8,
+								fontWeight: 300,
 							}}>
 							{description}
 						</Typography>
@@ -184,8 +181,8 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 				BackdropProps={{
 					timeout: 300,
 					sx: {
-						backgroundColor: "rgba(0, 0, 0, 0.9)",
-						backdropFilter: "blur(5px)",
+						backgroundColor: "rgba(0, 0, 0, 0.92)",
+						backdropFilter: "blur(8px)",
 					},
 				}}
 				sx={{
@@ -194,9 +191,6 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 					justifyContent: "center",
 					margin: 0,
 					padding: 0,
-					"& .MuiBackdrop-root": {
-						backgroundColor: "rgba(0, 0, 0, 0.9)",
-					},
 				}}>
 				<Box
 					sx={{
@@ -207,9 +201,6 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 						m: 0,
 						p: 0,
 						outline: "none",
-						"&:focus": {
-							outline: "none",
-						},
 					}}>
 					{/* Close Button */}
 					<IconButton
@@ -219,16 +210,17 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 							right: 16,
 							top: 16,
 							color: "white",
-							bgcolor: "rgba(0,0,0,0.6)",
+							bgcolor: "rgba(0,0,0,0.7)",
+							border: "1px solid rgba(255,255,255,0.15)",
 							zIndex: 1,
 							padding: 1,
 							"&:hover": {
-								bgcolor: "rgba(0,0,0,0.8)",
-								transform: "scale(1.1)",
+								bgcolor: "rgba(0,0,0,0.9)",
+								transform: "scale(1.05)",
 							},
 						}}
 						size="large">
-						<CloseIcon sx={{ fontSize: 24 }} />
+						<CloseIcon sx={{ fontSize: 22 }} />
 					</IconButton>
 
 					{/* Modal Image */}
@@ -240,7 +232,9 @@ const Certificate = ({ ImgSertif, title, issuer, date, description }) => {
 							maxWidth: "100%",
 							maxHeight: "90vh",
 							margin: "0 auto",
+							borderRadius: "12px",
 							objectFit: "contain",
+							boxShadow: "0 24px 60px rgba(0,0,0,0.9)",
 						}}
 					/>
 				</Box>

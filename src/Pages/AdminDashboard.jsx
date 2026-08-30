@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 
 import { getLocalComments, getLocalPinnedComment } from '../utils/dummyComments';
+import { getStoredProjects, getStoredCertificates } from '../utils/portfolioStorage';
 
 const StatCard = ({ title, value, icon: Icon, color, trend }) => (
 
@@ -93,6 +94,13 @@ const AdminDashboard = () => {
         commentsCount = allLocal.length;
         pinnedCount = localPinned ? 1 : 0;
         recent = allLocal.slice(0, 5);
+      }
+
+      if (projectCount === 0) {
+        projectCount = getStoredProjects().length;
+      }
+      if (certCount === 0) {
+        certCount = getStoredCertificates().length;
       }
 
       setStats({

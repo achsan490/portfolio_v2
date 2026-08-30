@@ -291,7 +291,7 @@ export const DEFAULT_TECH_STACK = [
 
 export const DEFAULT_PROFILE = {
     photo_url: '',
-    title: 'Frontend Developer',
+    title: 'Simple-Stack Developer',
     subtitle: 'Web Developer|Design|Video & Photo Editing|UI/UX Design',
     tech_stack: ['React', 'Javascript', 'Node.js', 'Tailwind', 'Next.js', 'PHP', 'MySQL'],
     github_url: 'https://github.com/achsan490',
@@ -313,14 +313,7 @@ export const getStoredProjects = () => {
         const saved = localStorage.getItem("projects");
         if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                const existingIds = new Set(parsed.map(p => p.id));
-                const missingDefaults = DEFAULT_PROJECTS.filter(p => !existingIds.has(p.id));
-                if (missingDefaults.length > 0) {
-                    const merged = [...missingDefaults, ...parsed];
-                    localStorage.setItem("projects", JSON.stringify(merged));
-                    return merged;
-                }
+            if (Array.isArray(parsed)) {
                 return parsed;
             }
         }

@@ -1,60 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabase";
+import { getStoredCertificates } from "../utils/portfolioStorage";
 import Certificate from "../components/Certificate";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { Award, TrendingUp } from "lucide-react";
-
-const defaultCertificates = [
-  {
-    id: 1,
-    Img: "/certificates/sql-certificate.jpg",
-    title: "Introduction to SQL",
-    issuer: "Sololearn",
-    date: "April 21, 2025",
-    description: "Successfully completed the course by demonstrating theoretical and practical understanding of SQL fundamentals, including database queries, data manipulation, and relational database concepts."
-  },
-  {
-    id: 2,
-    Img: "/certificates/python-essentials.jpg",
-    title: "Python Essentials 1",
-    issuer: "Cisco Networking Academy & Python Institute",
-    date: "June 07, 2026",
-    description: "Successfully completed the Python Essentials 1 course, demonstrating a foundational understanding of Python programming concepts including syntax, data types, control flow, functions, and basic algorithms."
-  },
-  {
-    id: 3,
-    Img: "/certificates/javascript-essentials.jpg",
-    title: "JavaScript Essentials 1",
-    issuer: "Cisco Networking Academy & JS Institute",
-    date: "June 04, 2026",
-    description: "Successfully completed the JavaScript Essentials 1 course, establishing a robust foundation in JavaScript core programming concepts, control structures, operations, and basic scripting."
-  },
-  {
-    id: 4,
-    Img: "/certificates/youtube-music.jpg",
-    title: "Sertifikasi YouTube Music",
-    issuer: "YouTube Music",
-    date: "June 04, 2026",
-    description: "Certified in YouTube Music Channel Management, demonstrating proficiency in managing official artist channels, audience growth strategies, and content optimization techniques."
-  },
-  {
-    id: 5,
-    Img: "/certificates/financial-literacy.jpg",
-    title: "Introduction to Financial Literacy",
-    issuer: "Dicoding Academy",
-    date: "June 04, 2026",
-    description: "Successfully completed the Introduction to Financial Literacy course, demonstrating core competencies in basic financial planning, budgeting, investment principles, and wealth management."
-  },
-  {
-    id: 6,
-    Img: "/certificates/javascript-statement.jpg",
-    title: "Statement of Achievement - JavaScript Essentials 1",
-    issuer: "Cisco Networking Academy & JS Institute",
-    date: "June 04, 2026",
-    description: "Awarded student level credential for proficiently demonstrating understanding of variables, data types, program flow, loops, functions, and exceptions in JavaScript."
-  }
-];
+import { Award, TrendingUp, CheckCircle, ArrowRight } from "lucide-react";
 
 const Certificates = () => {
     const [certificates, setCertificates] = useState([]);
@@ -66,19 +16,12 @@ const Certificates = () => {
         });
     }, []);
 
-    useEffect(() => {
-        fetchCertificates();
-    }, []);
-
     const fetchCertificates = async () => {
         try {
             setLoading(true);
 
-            // Check if Supabase is configured
             if (!supabase) {
-                console.warn("⚠️ Supabase not configured. Using default data.");
-                setCertificates(defaultCertificates);
-                localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
+                setCertificates(getStoredCertificates());
                 setLoading(false);
                 return;
             }
@@ -90,41 +33,39 @@ const Certificates = () => {
 
             if (error) throw error;
 
-            setCertificates(data && data.length > 0 ? data : defaultCertificates);
             if (data && data.length > 0) {
+                setCertificates(data);
                 localStorage.setItem("certificates", JSON.stringify(data));
+            } else {
+                setCertificates(getStoredCertificates());
             }
         } catch (error) {
-            console.error("Error fetching certificates:", error);
-            // Fallback to default data
-            setCertificates(defaultCertificates);
-            localStorage.setItem("certificates", JSON.stringify(defaultCertificates));
+            console.warn("Error fetching certificates from Supabase:", error);
+            setCertificates(getStoredCertificates());
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        fetchCertificates();
+
+        window.addEventListener('portfolio_certificates_updated', fetchCertificates);
+        return () => {
+            window.removeEventListener('portfolio_certificates_updated', fetchCertificates);
+        };
+    }, []);
+
     return (
-        <div className="md:px-[10%] px-[5%] w-full py-20 overflow-hidden" id="Certificates">
+        <div className="min-h-screen bg-transparent text-white pt-24 pb-16 px-[5%] sm:px-[5%] lg:px-[10%]">
             {/* Header Section */}
-            <div className="text-center pb-12" data-aos="fade-up" data-aos-duration="1000">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                    <Award className="w-10 h-10 text-blue-500" />
-                    <h2 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#3b82f6]">
-                        <span
-                            style={{
-                                color: "#2563eb",
-                                backgroundImage: "linear-gradient(45deg, #2563eb 10%, #3b82f6 93%)",
-                                WebkitBackgroundClip: "text",
-                                backgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                            }}
-                        >
-                            Certifications & Achievements
-                        </span>
+            <div className="text-center mb-12" data-aos="fade-up" data-aos-duration="1000">
+                <div className="inline-block relative">
+                    <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400" style={{ fontFamily: "'Space Grotesk', 'Poppins', sans-serif" }}>
+                        Certifications & Achievements
                     </h2>
                 </div>
-                <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2">
+                <p className="text-zinc-400 max-w-2xl mx-auto text-sm md:text-base mt-2 font-light">
                     A collection of professional certifications and achievements that validate my expertise
                     and commitment to continuous learning in technology and development.
                 </p>
@@ -133,46 +74,34 @@ const Certificates = () => {
             {/* Stats Section */}
             {!loading && certificates.length > 0 && (
                 <div
-                    className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+                    className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12"
                     data-aos="fade-up"
                     data-aos-duration="800"
                 >
-                    <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all">
+                    <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
                         <div className="flex items-center justify-center mb-3">
-                            <Award className="w-8 h-8 text-blue-500" />
+                            <Award className="w-7 h-7 text-zinc-300" />
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-2">{certificates.length}</h3>
-                        <p className="text-gray-400 text-sm">Total Certificates</p>
+                        <h3 className="text-3xl font-bold text-white mb-1 font-mono">{certificates.length}</h3>
+                        <p className="text-zinc-400 text-xs uppercase tracking-wider">Total Certificates</p>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all">
+                    <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
                         <div className="flex items-center justify-center mb-3">
-                            <TrendingUp className="w-8 h-8 text-blue-500" />
+                            <TrendingUp className="w-7 h-7 text-zinc-300" />
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-2">
+                        <h3 className="text-3xl font-bold text-white mb-1 font-mono">
                             {new Date().getFullYear()}
                         </h3>
-                        <p className="text-gray-400 text-sm">Latest Achievement</p>
+                        <p className="text-zinc-400 text-xs uppercase tracking-wider">Latest Achievement</p>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all">
+                    <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
                         <div className="flex items-center justify-center mb-3">
-                            <svg
-                                className="w-8 h-8 text-purple-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
+                            <CheckCircle className="w-7 h-7 text-emerald-400" />
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-2">100%</h3>
-                        <p className="text-gray-400 text-sm">Verified</p>
+                        <h3 className="text-3xl font-bold text-white mb-1 font-mono">100%</h3>
+                        <p className="text-zinc-400 text-xs uppercase tracking-wider">Verified Credential</p>
                     </div>
                 </div>
             )}
@@ -181,34 +110,32 @@ const Certificates = () => {
             {loading ? (
                 <div className="flex items-center justify-center py-20">
                     <div className="text-center">
-                        <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
-                        <p className="text-gray-400">Loading certificates...</p>
+                        <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
+                        <p className="text-zinc-400 text-sm">Loading certificates...</p>
                     </div>
                 </div>
             ) : certificates.length === 0 ? (
                 <div className="text-center py-20">
-                    <Award className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-400 text-lg">No certificates available yet</p>
-                    <p className="text-gray-500 text-sm mt-2">Check back soon for updates!</p>
+                    <Award className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+                    <p className="text-zinc-400 text-base">No certificates available yet</p>
+                    <p className="text-zinc-500 text-xs mt-1">Check back soon for updates!</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {certificates.map((certificate, index) => (
                         <div
                             key={certificate.id || index}
-                            data-aos={
-                                index % 3 === 0
-                                    ? "fade-up-right"
-                                    : index % 3 === 1
-                                        ? "fade-up"
-                                        : "fade-up-left"
-                            }
-                            data-aos-duration={
-                                index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"
-                            }
+                            data-aos="fade-up"
+                            data-aos-duration="800"
                             data-aos-delay={index * 100}
                         >
-                            <Certificate ImgSertif={certificate.Img} />
+                            <Certificate
+                                ImgSertif={certificate.Img}
+                                title={certificate.title}
+                                issuer={certificate.issuer}
+                                date={certificate.date}
+                                description={certificate.description}
+                            />
                         </div>
                     ))}
                 </div>
@@ -221,33 +148,21 @@ const Certificates = () => {
                     data-aos="fade-up"
                     data-aos-duration="1000"
                 >
-                    <div className="bg-gradient-to-r from-blue-600/10 to-cyan-600/10 border border-blue-500/20 rounded-2xl p-8 backdrop-blur-lg">
-                        <h3 className="text-2xl font-bold text-white mb-3">
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl max-w-3xl mx-auto">
+                        <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Space Grotesk', 'Poppins', sans-serif" }}>
                             Continuous Learning Journey
                         </h3>
-                        <p className="text-gray-400 max-w-2xl mx-auto mb-6">
+                        <p className="text-zinc-400 max-w-xl mx-auto mb-6 text-sm leading-relaxed font-light">
                             These certifications represent my dedication to staying current with industry
                             best practices and emerging technologies. I'm always pursuing new knowledge
                             to deliver better solutions.
                         </p>
                         <a
                             href="#Contact"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg transition-all shadow-lg hover:shadow-xl"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-xl transition-all hover:bg-zinc-200 hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(255,255,255,0.15)] text-sm"
                         >
                             <span>Let's Work Together</span>
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                />
-                            </svg>
+                            <ArrowRight className="w-4 h-4" />
                         </a>
                     </div>
                 </div>
