@@ -103,7 +103,7 @@ const ProjectDetails = () => {
       id: 26,
       Title: "TypeCraft Pro",
       Description: "TypeCraft Pro adalah platform tes kecepatan mengetik profesional dan game interaktif yang menggabungkan estetika minimalis dengan analitik presisi real-time. Dilengkapi fitur analitik WPM presisi, sound effect keyboard mekanik kustom (Typing, Spacebar, Mouse, Clicky Blue), multi-bahasa & mode coding, dark/cyberpunk themes, serta game mode 'Word Defense' untuk melatih refleks mengetik secara adiktif.",
-      Link: "https://type-craft-pro.vercel.app/",
+      Link: "https://ayo-mengetik.vercel.app/",
       Github: "https://github.com/achsan490",
       Img: "/typecraft-preview.png",
       category: "Project",

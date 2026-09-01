@@ -172,7 +172,7 @@ export default function FullWidthTabs() {
       id: 26,
       Title: "TypeCraft Pro",
       Description: "TypeCraft Pro — Minimalist Typing Test & Arcade Defense. Platform tes kecepatan mengetik profesional dengan analitik WPM presisi, sound effect keyboard mekanik, real-time feedback, dan mode arcade Word Defense.",
-      Link: "https://type-craft-pro.vercel.app/",
+      Link: "https://ayo-mengetik.vercel.app/",
       Img: "/typecraft-preview.png",
       category: "Project"
     },
